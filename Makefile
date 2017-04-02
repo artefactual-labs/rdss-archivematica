@@ -1,4 +1,6 @@
-ROOT_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
+ROOT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
+AM_BRANCH := "dev/docker"
+SS_BRANCH := "dev/docker"
 
 build: build-images
 
@@ -29,5 +31,5 @@ build-image-storage-service:
 			$(ROOT_DIR)/src/archivematica-storage-service/
 
 clone:
-	git clone git@github.com:JiscRDSS/archivematica.git $(ROOT_DIR)/src/archivematica
-	git clone git@github.com:JiscRDSS/archivematica-storage-service.git $(ROOT_DIR)/src/archivematica-storage-service.git
+	git clone --branch $(AM_BRANCH) git@github.com:JiscRDSS/archivematica.git $(ROOT_DIR)/src/archivematica
+	git clone --branch $(SS_BRANCH) git@github.com:JiscRDSS/archivematica-storage-service.git $(ROOT_DIR)/src/archivematica-storage-service.git
