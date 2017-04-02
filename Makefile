@@ -2,7 +2,7 @@ ROOT_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 
 build: build-images
 
-build-images: build-image-dashboard build-image-mcpserver build-image-mcpclient
+build-images: build-image-dashboard build-image-mcpserver build-image-mcpclient build-image-storage-service
 
 build-image-dashboard:
 	docker build --rm --pull \
@@ -21,6 +21,12 @@ build-image-mcpclient:
 		--tag rdss-archivematica-mcpclient:latest \
 		-f $(ROOT_DIR)/src/archivematica/src/MCPClient.Dockerfile \
 			$(ROOT_DIR)/src/archivematica/src/
+
+build-image-storage-service:
+	docker build --rm --pull \
+		--tag rdss-archivematica-storage-service:latest \
+		-f $(ROOT_DIR)/src/archivematica-storage-service/Dockerfile \
+			$(ROOT_DIR)/src/archivematica-storage-service/
 
 clone:
 	git clone git@github.com:JiscRDSS/archivematica.git $(ROOT_DIR)/src/archivematica
