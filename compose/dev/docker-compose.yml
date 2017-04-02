@@ -48,7 +48,13 @@ services:
     expose:
       - "3310"
 
-  # archivematica-mcpserver
-  # archivematica-mcpclient
-  # archivematica-dashboard
-  # archivematica-storage
+  nginx:
+    image: "nginx:stable-alpine"
+    volumes:
+      - "./nginx.conf:/etc/nginx/nginx.conf:ro"
+    expose:
+      - "80"
+      - "8000"
+    ports:
+      - "80"
+      - "8000"
