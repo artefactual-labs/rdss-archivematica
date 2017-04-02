@@ -58,3 +58,38 @@ services:
     ports:
       - "80"
       - "8000"
+
+  archivematica-mcp-server:
+    build:
+      context: "../../src/archivematica/src"
+      dockerfile: "MCPServer.Dockerfile"
+    environment:
+      DJANGO_SECRET_KEY: "12345"
+      DJANGO_SETTINGS_MODULE: "settings.local"
+
+  archivematica-mcp-client:
+    build:
+      context: "../../src/archivematica/src"
+      dockerfile: "MCPClient.Dockerfile"
+    environment:
+      DJANGO_SECRET_KEY: "12345"
+      DJANGO_SETTINGS_MODULE: "settings.local"
+
+  archivematica-dashboard:
+    build:
+      context: "../../src/archivematica/src"
+      dockerfile: "dashboard.Dockerfile"
+    environment:
+      DJANGO_SECRET_KEY: "12345"
+      DJANGO_SETTINGS_MODULE: "settings.local"
+    expose:
+      - "8000"
+
+  archivematica-storage-service:
+    build:
+      context: "../../src/archivematica-storage-service"
+    environment:
+      DJANGO_SECRET_KEY: "12345"
+      DJANGO_SETTINGS_MODULE: "storage_service.settings.local"
+    expose:
+      - "8000"
