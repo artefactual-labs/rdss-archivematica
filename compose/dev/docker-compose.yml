@@ -1,0 +1,54 @@
+---
+version: "2"
+
+volumes:
+
+  mysql_data:
+  elasticsearch_data:
+  archivematica_pipeline_data:
+  archivematica_storage_service_data:
+
+services:
+
+  mysql:
+    image: "percona:5.6"
+    user: "mysql"
+    environment:
+      - "MYSQL_ROOT_PASSWORD=12345"
+    volumes:
+      - "mysql_data:/var/lib/mysql"
+    expose:
+      - "3306"
+
+  elasticsearch:
+    image: "elasticsearch:1.7-alpine"
+    command: "elasticsearch -Des.node.name=TestNode -Des.network.host=0.0.0.0"
+    privileged: yes
+    volumes:
+      - "elasticsearch_data:/usr/share/elasticsearch/data"
+    expose:
+      - "9200"
+
+  redis:
+    image: "redis:3.2-alpine"
+    command: '--save "" --appendonly no'  # Persistency disabled
+    user: "redis"
+    expose:
+      - "6379"
+
+  gearmand:
+    image: "artefactual/gearmand:1.1.15-alpine"
+    command: "--queue-type=redis --redis-server=redis --redis-port=6379"
+    user: "gearman"
+    expose:
+      - "4730"
+
+  clamavd:
+    image: "dinkel/clamavd:latest"
+    expose:
+      - "3310"
+
+  # archivematica-mcpserver
+  # archivematica-mcpclient
+  # archivematica-dashboard
+  # archivematica-storage
