@@ -21,10 +21,10 @@ List the containers running:
 
     $ docker-compose ps
 
-You shouls see something like the following:
+You should see something like the following:
 
 ```
-docker-compose ps
+$ docker-compose ps
                Name                              Command               State                            Ports
 --------------------------------------------------------------------------------------------------------------------------------------
 dev_archivematica-dashboard_1         /bin/sh -c /usr/local/bin/ ...   Up      8000/tcp
