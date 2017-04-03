@@ -118,5 +118,6 @@ services:
       SS_DB_NAME: "/db/ss.sqlite3"
     volumes:
       - "../../src/archivematica-storage-service/:/src/"
+      - "archivematica_storage_service_data:/var/archivematica/storage_service:rw"
     expose:
       - "8000"
