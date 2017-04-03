@@ -40,7 +40,7 @@ dev_redis_1                           docker-entrypoint.sh --sav ...   Up      6
 ```
 
 Nginx is the web frontend and you can use it to access Archivematica. The
-`Ports` column show which ports have been made available. Based on the example
+`Ports` column shows which ports have been made available. Based on the example
 above, open your browser and point to:
 
 - http://127.0.0.1:32821 (Archivematica Dashboard)
