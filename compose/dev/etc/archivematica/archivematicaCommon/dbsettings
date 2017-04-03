@@ -1,0 +1,6 @@
+[client]
+user=archivematica
+password=demo
+host=mysql
+database=MCP
+max_overflow=40
