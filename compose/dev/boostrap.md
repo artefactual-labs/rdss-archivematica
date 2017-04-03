@@ -14,6 +14,9 @@ Populate database from archivematica-dashboard:
 
 Populate watched directories:
 
+    $ docker-compose run --user=root --entrypoint=bash archivematica-mcp-server -c "cp -R /src/MCPServer/share/sharedDirectoryStructure/* /var/archivematica/sharedDirectory/"
+    $ docker-compose run --user=root --entrypoint=bash archivematica-mcp-server -c "chown -R archivematica:archivematica /var/archivematica"
+
 Restart services:
 
     $ docker-compose restart archivematica-mcp-server archivematica-mcp-client

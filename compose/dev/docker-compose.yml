@@ -69,6 +69,7 @@ services:
     volumes:
       - "./etc/archivematica/archivematicaCommon/dbsettings:/etc/archivematica/archivematicaCommon/dbsettings:ro"
       - "./etc/archivematica/MCPServer/serverConfig.conf:/etc/archivematica/MCPServer/serverConfig.conf:ro"
+      - "archivematica_pipeline_data:/var/archivematica/sharedDirectory:rw"
 
   archivematica-mcp-client:
     build:
@@ -80,6 +81,7 @@ services:
     volumes:
       - "./etc/archivematica/archivematicaCommon/dbsettings:/etc/archivematica/archivematicaCommon/dbsettings:ro"
       - "./etc/archivematica/MCPClient/clientConfig.conf:/etc/archivematica/MCPClient/clientConfig.conf:ro"
+      - "archivematica_pipeline_data:/var/archivematica/sharedDirectory:rw"
 
   archivematica-dashboard:
     build:
@@ -90,6 +92,7 @@ services:
       DJANGO_SETTINGS_MODULE: "settings.local"
     volumes:
       - "./etc/archivematica/archivematicaCommon/dbsettings:/etc/archivematica/archivematicaCommon/dbsettings:ro"
+      - "archivematica_pipeline_data:/var/archivematica/sharedDirectory:rw"
     expose:
       - "8000"
 
