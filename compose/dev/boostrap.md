@@ -12,6 +12,11 @@ Populate database from archivematica-dashboard:
 
     $ docker-compose exec archivematica-dashboard /src/dashboard/src/manage.py migrate
 
+Populate database from archivematica-storage-service:
+
+    $ docker-compose exec --user="root" archivematica-storage-service sh -c "mkdir /db && chown archivematica:archivematica /db"
+    $ docker-compose exec archivematica-storage-service /src/storage_service/manage.py migrate
+
 Populate watched directories:
 
     $ docker-compose run --user=root --entrypoint=bash archivematica-mcp-server -c "cp -R /src/MCPServer/share/sharedDirectoryStructure/* /var/archivematica/sharedDirectory/"
