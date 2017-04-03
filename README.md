@@ -10,4 +10,4 @@ directory. You can use `make clone` to clone the repositories.
 
 ## Development
 
-Open [compose/dev](the compose/dev folder) to see more details.
+Open [the compose/dev folder](compose/dev) to see more details.
