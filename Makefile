@@ -32,4 +32,4 @@ build-image-storage-service:
 
 clone:
 	git clone --branch $(AM_BRANCH) git@github.com:JiscRDSS/archivematica.git $(ROOT_DIR)/src/archivematica
-	git clone --branch $(SS_BRANCH) git@github.com:JiscRDSS/archivematica-storage-service.git $(ROOT_DIR)/src/archivematica-storage-service.git
+	git clone --branch $(SS_BRANCH) git@github.com:JiscRDSS/archivematica-storage-service.git $(ROOT_DIR)/src/archivematica-storage-service
