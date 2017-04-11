@@ -11,6 +11,9 @@ build:
 
 up:
 	docker-compose up -d
+	@echo -n "Waiting 30 seconds for services to finish starting..."
+	@sleep 30
+	@echo " done."
 
 bootstrap: bootstrap-dashboard bootstrap-storage-service restart-mcp-services
 
