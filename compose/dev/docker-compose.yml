@@ -43,6 +43,8 @@ services:
     user: "gearman"
     expose:
       - "4730"
+    links:
+      - "redis"
 
   clamavd:
     image: "dinkel/clamavd:latest"
@@ -74,6 +76,9 @@ services:
       - "./etc/archivematica/archivematicaCommon/dbsettings:/etc/archivematica/archivematicaCommon/dbsettings:ro"
       - "./etc/archivematica/MCPServer/serverConfig.conf:/etc/archivematica/MCPServer/serverConfig.conf:ro"
       - "archivematica_pipeline_data:/var/archivematica/sharedDirectory:rw"
+    links:
+      - "mysql"
+      - "gearmand"
 
   archivematica-mcp-client:
     build:
@@ -89,6 +94,11 @@ services:
       - "./etc/archivematica/archivematicaCommon/dbsettings:/etc/archivematica/archivematicaCommon/dbsettings:ro"
       - "./etc/archivematica/MCPClient/clientConfig.conf:/etc/archivematica/MCPClient/clientConfig.conf:ro"
       - "archivematica_pipeline_data:/var/archivematica/sharedDirectory:rw"
+    links:
+      - "mysql"
+      - "gearmand"
+      - "elasticsearch"
+      - "archivematica-storage-service"
 
   archivematica-dashboard:
     build:
@@ -105,6 +115,11 @@ services:
       - "archivematica_pipeline_data:/var/archivematica/sharedDirectory:rw"
     expose:
       - "8000"
+    links:
+      - "mysql"
+      - "gearmand"
+      - "elasticsearch"
+      - "archivematica-storage-service"
 
   archivematica-storage-service:
     build:
@@ -123,3 +138,5 @@ services:
       - "archivematica_storage_service_staging_data:/var/archivematica/storage_service:rw"
     expose:
       - "8000"
+    links:
+      - "mysql"
