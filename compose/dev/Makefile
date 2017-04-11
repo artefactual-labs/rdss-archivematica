@@ -37,4 +37,4 @@ bootstrap-storage-service:
 restart-mcp-services:
 	docker-compose restart archivematica-mcp-server archivematica-mcp-client
 
-.PHONE: default destroy bootstrap build bootstrap-dashboard bootstrap-storage-service restart-mcp-services
+.PHONY: default destroy bootstrap build bootstrap-dashboard bootstrap-storage-service restart-mcp-services
