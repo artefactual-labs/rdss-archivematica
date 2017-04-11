@@ -128,10 +128,7 @@ services:
       FORWARDED_ALLOW_IPS: "*"  # Specific to Gunicorn
       DJANGO_SECRET_KEY: "12345"
       DJANGO_SETTINGS_MODULE: "storage_service.settings.production"
-      SS_DB_HOST: ""
-      SS_DB_USER: ""
-      SS_DB_PASSWORD: ""
-      SS_DB_NAME: "/db/ss.sqlite3"
+      SS_DB_URL: "mysql://archivematica:demo@mysql/SS"
     volumes:
       - "../../src/archivematica-storage-service/:/src/"
       - "archivematica_storage_service_data:/var/archivematica/sharedDirectory:rw"
