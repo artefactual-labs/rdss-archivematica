@@ -113,6 +113,7 @@ services:
       - "../../src/archivematica/src/archivematicaCommon/:/src/archivematicaCommon/"
       - "../../src/archivematica/src/dashboard/:/src/dashboard/"
       - "./etc/archivematica/archivematicaCommon/dbsettings:/etc/archivematica/archivematicaCommon/dbsettings:ro"
+      - "./etc/archivematica/MCPClient/clientConfig.conf:/etc/archivematica/MCPClient/clientConfig.conf:ro"
       - "archivematica_pipeline_data:/var/archivematica/sharedDirectory:rw"
     expose:
       - "8000"
