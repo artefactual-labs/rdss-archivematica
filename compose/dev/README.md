@@ -51,3 +51,26 @@ The ports assigned are not permament.
 Once you're done you can destroy everything with: `make destroy`. This task
 will also remove the data volumes, e.g. the changes written to disk (like those
 belonging in a database) will also be lost permanently.
+
+## Development workflow
+
+If your working on webapps like `dashboard` or `archivematica-storage-service`
+your changes in the source code should take effect immediately - you don't need
+to restart the service. But in some cases you also need to regenerate the
+container (e.g. if you change parameters in `docker-compose.dev.yml`). A nice
+shortcut that can do that for you while making sure the service is started
+again is:
+
+    $ docker-compose up -d archivematica-dashboard
+
+If you add the `--build` flag, the Docker image will be rebuilt too. This is
+useful when you've made changes to the `Dockerfile` or perhaps added new
+dependencies to `requirements/*.txt` that you want to be installed. For
+example:
+
+    $ docker-compose up --build -d archivematica-dashboard
+
+In some cases you need to go further and discard any image layer cached
+previously. You can only do this using `docker-compose build` directly:
+
+    $ docker-compose build --no-cache --pull archivematica-dashboard
