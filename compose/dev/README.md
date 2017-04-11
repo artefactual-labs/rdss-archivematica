@@ -52,6 +52,13 @@ Once you're done you can destroy everything with: `make destroy`. This task
 will also remove the data volumes, e.g. the changes written to disk (like those
 belonging in a database) will also be lost permanently.
 
+## Proceeding with the installer
+
+Log in the Storage Service first using the default user: `test`, password
+`test`. Go to the user page under the *Administration* area to find your API
+key. Next, open the dashboard. You will need the API key when you're requested
+to introduce the connection details of the Storage Service.
+
 ## Development workflow
 
 If your working on webapps like `dashboard` or `archivematica-storage-service`
@@ -74,3 +81,7 @@ In some cases you need to go further and discard any image layer cached
 previously. You can only do this using `docker-compose build` directly:
 
     $ docker-compose build --no-cache --pull archivematica-dashboard
+
+Our containers send log events to `stderr` by default. You can watch the
+output using `docker-compose logs`. Use the `-f` argument to follow the log
+output.
