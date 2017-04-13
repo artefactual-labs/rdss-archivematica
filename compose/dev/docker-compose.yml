@@ -6,7 +6,6 @@ volumes:
   mysql_data:
   elasticsearch_data:
   archivematica_pipeline_data:
-  archivematica_storage_service_data:
   archivematica_storage_service_staging_data:
 
 services:
@@ -108,12 +107,14 @@ services:
       FORWARDED_ALLOW_IPS: "*"  # Specific to Gunicorn
       DJANGO_SECRET_KEY: "12345"
       DJANGO_SETTINGS_MODULE: "settings.local"
+      DJANGO_ALLOWED_HOSTS: "*"
       ARCHIVEMATICA_DASHBOARD_GEARMAN: "gearmand:4730"
     volumes:
       - "../../src/archivematica/src/archivematicaCommon/:/src/archivematicaCommon/"
       - "../../src/archivematica/src/dashboard/:/src/dashboard/"
       - "./etc/archivematica/archivematicaCommon/dbsettings:/etc/archivematica/archivematicaCommon/dbsettings:ro"
       - "./etc/archivematica/MCPClient/clientConfig.conf:/etc/archivematica/MCPClient/clientConfig.conf:ro"
+      - "./etc/archivematica/MCPServer/serverConfig.conf:/etc/archivematica/MCPServer/serverConfig.conf:ro"
       - "archivematica_pipeline_data:/var/archivematica/sharedDirectory:rw"
     expose:
       - "8000"
@@ -130,11 +131,12 @@ services:
       FORWARDED_ALLOW_IPS: "*"  # Specific to Gunicorn
       DJANGO_SECRET_KEY: "12345"
       DJANGO_SETTINGS_MODULE: "storage_service.settings.local"
+      DJANGO_ALLOWED_HOSTS: "*"
       SS_DB_URL: "mysql://archivematica:demo@mysql/SS"
     volumes:
       - "../../src/archivematica-storage-service/:/src/"
       - "../../src/archivematica-sampledata/:/home/archivematica-sampledata/"
-      - "archivematica_storage_service_data:/var/archivematica/sharedDirectory:rw"
+      - "archivematica_pipeline_data:/var/archivematica/sharedDirectory:rw"
       - "archivematica_storage_service_staging_data:/var/archivematica/storage_service:rw"
     expose:
       - "8000"
