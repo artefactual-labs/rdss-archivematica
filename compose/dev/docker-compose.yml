@@ -49,6 +49,8 @@ services:
     image: "dinkel/clamavd:latest"
     expose:
       - "3310"
+    volumes:
+      - "archivematica_pipeline_data:/var/archivematica/sharedDirectory:rw"
 
   nginx:
     image: "nginx:stable-alpine"
@@ -92,8 +94,10 @@ services:
       - "../../src/archivematica/src/MCPClient/:/src/MCPClient/"
       - "./etc/archivematica/archivematicaCommon/dbsettings:/etc/archivematica/archivematicaCommon/dbsettings:ro"
       - "./etc/archivematica/MCPClient/clientConfig.conf:/etc/archivematica/MCPClient/clientConfig.conf:ro"
+      - "./etc/clamav/clamd.conf:/etc/clamav/clamd.conf:ro"
       - "archivematica_pipeline_data:/var/archivematica/sharedDirectory:rw"
     links:
+      - "clamavd"
       - "mysql"
       - "gearmand"
       - "elasticsearch"
