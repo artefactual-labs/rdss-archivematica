@@ -93,6 +93,7 @@ services:
       - "../../src/archivematica/src/dashboard/:/src/dashboard/"
       - "../../src/archivematica/src/MCPClient/:/src/MCPClient/"
       - "./etc/archivematica/archivematicaCommon/dbsettings:/etc/archivematica/archivematicaCommon/dbsettings:ro"
+      - "./etc/archivematica/MCPServer/serverConfig.conf:/etc/archivematica/MCPServer/serverConfig.conf:ro"
       - "./etc/archivematica/MCPClient/clientConfig.conf:/etc/archivematica/MCPClient/clientConfig.conf:ro"
       - "./etc/clamav/clamd.conf:/etc/clamav/clamd.conf:ro"
       - "archivematica_pipeline_data:/var/archivematica/sharedDirectory:rw"
