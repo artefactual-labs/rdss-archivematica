@@ -85,3 +85,15 @@ previously. You can only do this using `docker-compose build` directly:
 Our containers send log events to `stderr` by default. You can watch the
 output using `docker-compose logs`. Use the `-f` argument to follow the log
 output.
+
+### Using django-admin
+
+django-admin is Django's command-line utility for administrative tasks. One of
+its most interesting features is the interactive interpreter, e.g. the
+following opens a new shell in the Dashboard:
+
+    $ docker-compose run --rm --entrypoint=/src/dashboard/src/manage.py archivematica-dashboard shell
+
+Similary, you can open a shell in the Storage Service with:
+
+    $ docker-compose run --rm --entrypoint=/src/storage_service/manage.py archivematica-storage-service shell
