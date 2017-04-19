@@ -45,6 +45,13 @@ services:
     links:
       - "redis"
 
+  fits:
+    image: "artefactual/fits-ngserver:0.8.4"
+    expose:
+      - "2113"
+    volumes:
+      - "archivematica_pipeline_data:/var/archivematica/sharedDirectory:ro"
+
   clamavd:
     image: "dinkel/clamavd:latest"
     expose:
@@ -88,6 +95,8 @@ services:
     environment:
       DJANGO_SECRET_KEY: "12345"
       DJANGO_SETTINGS_MODULE: "settings.common"
+      NAILGUN_SERVER: "fits"
+      NAILGUN_PORT: "2113"
     volumes:
       - "../../src/archivematica/src/archivematicaCommon/:/src/archivematicaCommon/"
       - "../../src/archivematica/src/dashboard/:/src/dashboard/"
@@ -98,6 +107,7 @@ services:
       - "./etc/clamav/clamd.conf:/etc/clamav/clamd.conf:ro"
       - "archivematica_pipeline_data:/var/archivematica/sharedDirectory:rw"
     links:
+      - "fits"
       - "clamavd"
       - "mysql"
       - "gearmand"
