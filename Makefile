@@ -1,6 +1,6 @@
 ROOT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
-AM_BRANCH := "dev/docker"
-SS_BRANCH := "dev/docker"
+AM_BRANCH := "qa/jisc"
+SS_BRANCH := "qa/jisc"
 
 build: build-images
 
