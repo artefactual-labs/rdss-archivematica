@@ -12,6 +12,7 @@ URL | Branch | Components
 --- | ------ | ----------
 https://github.com/JiscRDSS/archivematica | qa/jisc | MCPServer, MCPClient, Dashboard
 https://github.com/JiscRDSS/archivematica-storage-service | qa/jisc | Storage Service
+https://github.com/artefactual/archivematica-sampledata | master | Sample data
 
 ## Development
 

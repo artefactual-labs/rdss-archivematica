@@ -33,4 +33,4 @@ build-image-storage-service:
 clone:
 	git clone --branch $(AM_BRANCH) git@github.com:JiscRDSS/archivematica.git $(ROOT_DIR)/src/archivematica
 	git clone --branch $(SS_BRANCH) git@github.com:JiscRDSS/archivematica-storage-service.git $(ROOT_DIR)/src/archivematica-storage-service
-	git clone --depth 1 --branch master https://github.com/artefactual/archivematica-sampledata.git src/archivematica-sampledata
+	git clone --depth 1 --recursive --branch master https://github.com/artefactual/archivematica-sampledata.git $(ROOT_DIR)/src/archivematica-sampledata
