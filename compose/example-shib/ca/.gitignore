@@ -1,0 +1,5 @@
+# Ignore CA files
+certs
+db
+newcerts
+private

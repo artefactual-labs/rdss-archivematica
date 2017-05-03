@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AttributeResolver
+        xmlns="urn:mace:shibboleth:2.0:resolver" 
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd">
+
+    <AttributeDefinition id="cn" xsi:type="Simple" sourceAttributeID="cn">
+        <Dependency ref="example_ldap" />
+        <AttributeEncoder xsi:type="SAML1ScopedString" name="urn:mace:dir:attribute-def:cn" encodeType="false" />
+        <AttributeEncoder xsi:type="SAML2ScopedString" name="urn:oid:1.3.6.1.4.1.1466.115.121.1.15" friendlyName="givenName" encodeType="false" />
+    </AttributeDefinition>
+    
+    <AttributeDefinition id="eduPersonEntitlement" xsi:type="Simple" sourceAttributeID="eduPersonEntitlement">
+        <Dependency ref="example_ldap" />
+        <AttributeEncoder xsi:type="SAML1ScopedString" name="urn:mace:dir:attribute-def:eduPersonEntitlement" encodeType="false" />
+        <AttributeEncoder xsi:type="SAML2ScopedString" name="urn:oid:1.3.6.1.4.1.1466.115.121.1.15" friendlyName="eduPersonEntitlement" encodeType="false" />
+    </AttributeDefinition>
+    
+    <AttributeDefinition id="eduPersonPrincipalName" xsi:type="Scoped" scope="%{idp.scope}" sourceAttributeID="eduPersonPrincipalName">
+        <Dependency ref="example_ldap" />
+        <AttributeEncoder xsi:type="SAML1ScopedString" name="urn:mace:dir:attribute-def:eduPersonPrincipalName" encodeType="false" />
+        <AttributeEncoder xsi:type="SAML2ScopedString" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.6" friendlyName="eduPersonPrincipalName" encodeType="false" />
+    </AttributeDefinition>
+    
+    <AttributeDefinition id="givenName" xsi:type="Simple" sourceAttributeID="givenName">
+        <Dependency ref="example_ldap" />
+        <AttributeEncoder xsi:type="SAML1ScopedString" name="urn:mace:dir:attribute-def:givenName" encodeType="false" />
+        <AttributeEncoder xsi:type="SAML2ScopedString" name="urn:oid:1.3.6.1.4.1.1466.115.121.1.15" friendlyName="givenName" encodeType="false" />
+    </AttributeDefinition>
+    
+    <AttributeDefinition id="mail" xsi:type="Simple" sourceAttributeID="mail">
+        <Dependency ref="example_ldap" />
+        <AttributeEncoder xsi:type="SAML1ScopedString" name="urn:mace:dir:attribute-def:mail" encodeType="false" />
+        <AttributeEncoder xsi:type="SAML2ScopedString" name="urn:oid:1.3.6.1.4.1.1466.115.121.1.26" friendlyName="mail" encodeType="false" />
+    </AttributeDefinition>
+    
+    <AttributeDefinition id="sn" xsi:type="Simple" sourceAttributeID="sn">
+        <Dependency ref="example_ldap" />
+        <AttributeEncoder xsi:type="SAML1ScopedString" name="urn:mace:dir:attribute-def:sn" encodeType="false" />
+        <AttributeEncoder xsi:type="SAML2ScopedString" name="urn:oid:1.3.6.1.4.1.1466.115.121.1.15" friendlyName="sn" encodeType="false" />
+    </AttributeDefinition>
+
+    <DataConnector id="example_ldap" xsi:type="LDAPDirectory"
+            ldapURL="%{idp.attribute.resolver.LDAP.ldapURL}"
+            baseDN="%{idp.attribute.resolver.LDAP.baseDN}"
+            principal="%{idp.attribute.resolver.LDAP.bindDN}"
+            principalCredential="%{idp.attribute.resolver.LDAP.bindDNCredential}"
+            useStartTLS="%{idp.attribute.resolver.LDAP.useStartTLS:true}">
+            <FilterTemplate>
+                <![CDATA[
+                    %{idp.attribute.resolver.LDAP.searchFilter}
+                ]]>
+            </FilterTemplate>
+    </DataConnector>
+    
+</AttributeResolver>

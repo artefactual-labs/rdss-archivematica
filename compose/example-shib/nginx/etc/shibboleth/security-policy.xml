@@ -1,0 +1,8 @@
+<SecurityPolicies xmlns="urn:mace:shibboleth:2.0:native:sp:config">
+
+	<!-- Disable security for demo/test purposes. Don't use in production -->
+    <Policy id="default" validate="false">
+        <PolicyRule type="NullSecurity"/>
+    </Policy>
+
+</SecurityPolicies>

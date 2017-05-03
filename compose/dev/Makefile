@@ -1,6 +1,9 @@
 .DEFAULT_GOAL := build
 
-all: destroy build up bootstrap
+ROOT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
+
+all: destroy bootstrap
+	docker-compose ps
 
 destroy:
 	docker-compose stop
@@ -8,14 +11,6 @@ destroy:
 
 build:
 	docker-compose build
-
-up:
-	docker-compose up -d
-	@echo -n "Waiting 30 seconds for services to finish starting..."
-	@sleep 30
-	@echo " done."
-
-bootstrap: bootstrap-storage-service bootstrap-dashboard restart-mcp-services
 
 bootstrap-storage-service:
 	docker-compose exec mysql mysql -hlocalhost -uroot -p12345 -e "DROP DATABASE IF EXISTS SS;"
@@ -35,6 +30,8 @@ bootstrap-storage-service:
 					--password="test" \
 					--email="test@test.com" \
 					--api-key="test"
+
+bootstrap: build bootstrap-dashboard bootstrap-storage-service restart-mcp-services
 
 bootstrap-dashboard:
 	docker-compose exec mysql mysql -hlocalhost -uroot -p12345 -e "DROP DATABASE IF EXISTS MCP;"
@@ -62,6 +59,12 @@ bootstrap-dashboard:
 
 restart-mcp-services:
 	docker-compose restart archivematica-mcp-server archivematica-mcp-client
+
+up: build
+	$(foreach DIR, $(COMPOSE_DIRS), docker-compose up -d ;)
+	@echo -n "Waiting 30 seconds for services to finish starting..."
+	@sleep 30
+	@echo " done."
 
 watch-am:
 	docker-compose logs -f archivematica-mcp-server archivematica-mcp-client archivematica-dashboard
