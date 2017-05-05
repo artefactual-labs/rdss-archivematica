@@ -157,3 +157,17 @@ services:
       - "8000"
     links:
       - "mysql"
+
+  rdss-archivematica-channel-adapter-consumer:
+    build:
+      context: "../../src/rdss-archivematica-channel-adapter"
+    command: "consumer"
+    links:
+      - "archivematica-dashboard"
+
+  rdss-archivematica-channel-adapter-publisher:
+    build:
+      context: "../../src/rdss-archivematica-channel-adapter"
+    command: "publisher"
+    links:
+      - "archivematica-dashboard"

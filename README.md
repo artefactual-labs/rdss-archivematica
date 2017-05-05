@@ -17,3 +17,11 @@ https://github.com/artefactual/archivematica-sampledata | master | Sample data
 ## Development
 
 Open [the compose/dev folder](compose/dev) to see more details.
+
+## AWS deployment
+
+#### Docker Machine + Amazon EC2
+
+Deployment of the development environment in a single EC2 instance supported by Docker Machine.
+
+Open [the aws/machine folder](aws/machine) to see more details.
