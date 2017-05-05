@@ -1,0 +1,13 @@
+[
+  {
+    "essential": true,
+    "image": "artefactual/fits-ngserver:0.8.4",
+    "mountPoints": [
+      {
+        "containerPath": "/var/archivematica/sharedDirectory",
+        "sourceVolume": "Archivematica_Pipeline_Data"
+      }
+    ],
+    "name": "fits"
+  }
+]

@@ -12,16 +12,23 @@ URL | Branch | Components
 --- | ------ | ----------
 https://github.com/JiscRDSS/archivematica | qa/jisc | MCPServer, MCPClient, Dashboard
 https://github.com/JiscRDSS/archivematica-storage-service | qa/jisc | Storage Service
+https://github.com/JiscRDSS/rdss-archivematica-channel-adapter | dev/basic-consumer | Channel Adapter
 https://github.com/artefactual/archivematica-sampledata | master | Sample data
 
-## Development
+## Development environment
 
 Open [the compose/dev folder](compose/dev) to see more details.
 
-## AWS deployment
+## AWS environment
 
 #### Docker Machine + Amazon EC2
 
 Deployment of the development environment in a single EC2 instance supported by Docker Machine.
 
 Open [the aws/machine folder](aws/machine) to see more details.
+
+#### Terraform + Amazon ECS
+
+Using Terraform to create all the necessary infrastructure and Amazon ECS to run the containers in a cluster of EC2 instances.
+
+Open [the aws/ecs folder](aws/ecs) to see more details.

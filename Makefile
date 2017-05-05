@@ -32,7 +32,7 @@ build-image-storage-service:
 			$(ROOT_DIR)/src/archivematica-storage-service/
 
 clone:
-	git clone --branch $(AM_BRANCH) git@github.com:JiscRDSS/archivematica.git $(ROOT_DIR)/src/archivematica
-	git clone --branch $(SS_BRANCH) git@github.com:JiscRDSS/archivematica-storage-service.git $(ROOT_DIR)/src/archivematica-storage-service
-	git clone --branch $(AD_BRANCH) git@github.com:JiscRDSS/rdss-archivematica-channel-adapter.git $(ROOT_DIR)/src/rdss-archivematica-channel-adapter
-	git clone --depth 1 --recursive --branch master https://github.com/artefactual/archivematica-sampledata.git $(ROOT_DIR)/src/archivematica-sampledata
+	-git clone --branch $(AM_BRANCH) git@github.com:JiscRDSS/archivematica.git $(ROOT_DIR)/src/archivematica
+	-git clone --branch $(SS_BRANCH) git@github.com:JiscRDSS/archivematica-storage-service.git $(ROOT_DIR)/src/archivematica-storage-service
+	-git clone --branch $(AD_BRANCH) git@github.com:JiscRDSS/rdss-archivematica-channel-adapter.git $(ROOT_DIR)/src/rdss-archivematica-channel-adapter
+	-git clone --depth 1 --recursive --branch master https://github.com/artefactual/archivematica-sampledata.git $(ROOT_DIR)/src/archivematica-sampledata

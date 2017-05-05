@@ -1,0 +1,8 @@
+[
+  {
+    "essential": true,
+    "image": "dinkel/clamavd:latest",
+    "mountPoints": [],
+    "name": "clamavd"
+  }
+]

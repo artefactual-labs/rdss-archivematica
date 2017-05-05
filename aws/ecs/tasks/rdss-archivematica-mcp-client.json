@@ -1,0 +1,62 @@
+[
+  {
+    "environment": [
+      {
+        "name": "DJANGO_SECRET_KEY",
+        "value": "12345"
+      },
+      {
+        "name": "DJANGO_SETTINGS_MODULE",
+        "value": "settings.common"
+      },
+      {
+        "name": "NAILGUN_SERVER",
+        "value": "fits"
+      },
+      {
+        "name": "NAILGUN_PORT",
+        "value": "2113"
+      }
+    ],
+    "essential": true,
+    "links": [
+      "fits",
+      "clamavd",
+      "mysql",
+      "gearmand",
+      "elasticsearch",
+      "rdss-archivematica-storage-service"
+    ],
+    "mountPoints": [
+      {
+        "containerPath": "/src/archivematicaCommon/",
+        "sourceVolume": "____SrcArchivematicaSrcArchivematicacommon"
+      },
+      {
+        "containerPath": "/src/dashboard/",
+        "sourceVolume": "____SrcArchivematicaSrcDashboard"
+      },
+      {
+        "containerPath": "/src/MCPClient/",
+        "sourceVolume": "____SrcArchivematicaSrcMcpclient"
+      },
+      {
+        "containerPath": "/etc/archivematica/archivematicaCommon/dbsettings",
+        "sourceVolume": "_EtcArchivematicaArchivematicacommonDbsettings"
+      },
+      {
+        "containerPath": "/etc/archivematica/MCPServer/serverConfig.conf",
+        "sourceVolume": "_EtcArchivematicaMcpserverServerconfig_Conf"
+      },
+      {
+        "containerPath": "/etc/archivematica/MCPClient/clientConfig.conf",
+        "sourceVolume": "_EtcArchivematicaMcpclientClientconfig_Conf"
+      },
+      {
+        "containerPath": "/etc/clamav/clamd.conf",
+        "sourceVolume": "_EtcClamavClamd_Conf"
+      }
+    ],
+    "name": "rdss-archivematica-mcp-client"
+  }
+]

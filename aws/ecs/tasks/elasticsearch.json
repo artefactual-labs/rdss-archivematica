@@ -1,0 +1,18 @@
+[
+  {
+    "command": [
+      "elasticsearch",
+      "-Des.node.name=TestNode",
+      "-Des.network.host=0.0.0.0"
+    ],
+    "essential": true,
+    "image": "elasticsearch:1.7-alpine",
+    "mountPoints": [
+      {
+        "containerPath": "/usr/share/elasticsearch/data",
+        "sourceVolume": "Elasticsearch_Data"
+      }
+    ],
+    "name": "elasticsearch"
+  }
+]

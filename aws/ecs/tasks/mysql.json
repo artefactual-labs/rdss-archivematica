@@ -1,0 +1,20 @@
+[
+  {
+    "environment": [
+      {
+        "name": "MYSQL_ROOT_PASSWORD",
+        "value": "12345"
+      }
+    ],
+    "essential": true,
+    "image": "percona:5.6",
+    "mountPoints": [
+      {
+        "containerPath": "/var/lib/mysql",
+        "sourceVolume": "Mysql_Data"
+      }
+    ],
+    "name": "mysql",
+    "user": "mysql"
+  }
+]

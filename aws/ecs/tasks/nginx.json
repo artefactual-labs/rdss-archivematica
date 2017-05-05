@@ -1,0 +1,21 @@
+[
+  {
+    "essential": true,
+    "image": "nginx:stable-alpine",
+    "mountPoints": [
+      {
+        "containerPath": "/etc/nginx/nginx.conf",
+        "sourceVolume": "_EtcNginxNginx_Conf"
+      }
+    ],
+    "name": "nginx",
+    "portMappings": [
+      {
+        "containerPort": 80
+      },
+      {
+        "containerPort": 8000
+      }
+    ]
+  }
+]
