@@ -74,8 +74,3 @@ fi
 rm -f ${SHIB_SP1_DIR}/sp1/idp_metadata.xml
 cp -p ${SHIB_IDP_DIR}/metadata/idp-metadata.xml \
 	${SHIB_SP1_DIR}/sp1/idp_metadata.xml
-	
-# Build our custom Docker image
-docker build --tag="arkivum/example-shib-sp" \
-	--build-arg DOMAIN_NAME="${DOMAIN_NAME}" \
-	.

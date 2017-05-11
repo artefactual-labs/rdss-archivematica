@@ -18,6 +18,7 @@ server {
   location = /shibauthorizer {
     internal;
     include fastcgi_params;
+    include shib_fastcgi_params;
     fastcgi_param  HTTPS on;
     fastcgi_param  SERVER_PORT 443;
     fastcgi_param  SERVER_PROTOCOL https;

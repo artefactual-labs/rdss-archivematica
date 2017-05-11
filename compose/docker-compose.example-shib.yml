@@ -13,12 +13,16 @@ services:
   # Override main nginx config, linking it to our demo services
   nginx:
     image: "arkivum/shibboleth-nginx"
+    build:
+      context: "./example-shib/nginx/"
+      args:
+        - DOMAIN_NAME
     container_name: "myapp.${DOMAIN_NAME}"
     hostname: "myapp"
     domainname: "${DOMAIN_NAME}"
     networks:
       - "default"
-      - "example"
+      - "shibnet"
     environment:
       # Client app configuration
       CLIENT_APP_HOSTNAME: "myapp.${DOMAIN_NAME}"
@@ -40,31 +44,18 @@ services:
       - "example-app"
       - "example-idp:idp.${DOMAIN_NAME}"
 
-  # LDAP service for the given domain
-  example-ldap:
-    image: "arkivum/example-ldap"
-    container_name: "ldap.${DOMAIN_NAME}"
-    hostname: "ldap"
-    domainname: "${DOMAIN_NAME}"
-    networks:
-      - "example"
-    environment:
-      - "LDAP_DOMAIN=${DOMAIN_NAME}"
-      - "LDAP_ORGANISATION=Example University"
-      - "LDAP_TLS=false"
-    volumes:
-      - "ldap_data:/var/lib/ldap/"
-    expose:
-      - "389"
-
   # Shibboleth IdP service for the domain
   example-idp:
     image: "arkivum/example-shib-idp"
+    build:
+      context: "./example-shib/idp/"
+      args:
+        - DOMAIN_NAME
     container_name: "idp.${DOMAIN_NAME}"
     hostname: "idp"
     domainname: "${DOMAIN_NAME}"
     networks:
-      - "example"
+      - "shibnet"
     environment:
       - "JETTY_BROWSER_SSL_KEYSTORE_PASSWORD=12345"
       - "JETTY_BACKCHANNEL_SSL_KEYSTORE_PASSWORD=12345"
@@ -77,32 +68,34 @@ services:
     ports:
       - "${IDP_EXTERNAL_IP}:443:4443"
     depends_on:
-      - "example-ldap"
       - "example-sp"
+      - "ldap"
     links:
-      - "example-ldap:ldap.${DOMAIN_NAME}"
       - "example-sp:sp1.${DOMAIN_NAME}"
+      - "ldap:ldap.${DOMAIN_NAME}"
 
   # Demo Shibboleth SP for the given domain, which uses djangosaml2
   example-sp:
     image: "arkivum/example-shib-sp"
+    build:
+      context: "./example-shib/sp/"
+      args:
+        - DOMAIN_NAME
     container_name: "sp1.${DOMAIN_NAME}"
     hostname: "sp1"
     domainname: "${DOMAIN_NAME}"
     networks:
-      - "example"
+      - "shibnet"
     expose:
       - "80"
     ports:
       - "${SP1_EXTERNAL_IP}:80:80"
-    links:
-      - "example-ldap:ldap.${DOMAIN_NAME}"
 
   # Demo app, which relies on nginx-shibboleth for auth
   example-app:
     image: "alang/django:1.8-python2"
     networks:
-      - "example"
+      - "shibnet"
     environment:
       DJANGO_ALLOWED_HOSTS: "*"
       DJANGO_APP: "myapp"
@@ -110,10 +103,30 @@ services:
       GUNICORN_CMD_ARGS: "--bind 0.0.0.0:8000 --access-logfile - --error-logfile - --log-level info"
       PYTHONUNBUFFERED: "1"
     volumes:
-      - "./myapp/src/myapp/:/usr/django/app/"
+      # Use of BASE_DIR is necessary here because compose gets incorrect context
+      # when using config file from outside of same directory (e.g. parent dir)
+      - "./example-shib/myapp/src/myapp/:/usr/django/app/:ro"
     expose:
       - "8000"
 
+  # LDAP service for the given domain
+  ldap:
+    image: "osixia/openldap"
+    hostname: "ldap"
+    domainname: "${DOMAIN_NAME}"
+    networks:
+      - "shibnet"
+    environment:
+      - "LDAP_DOMAIN=${DOMAIN_NAME}"
+      - "LDAP_ORGANISATION=${DOMAIN_ORGANISATION}"
+      - "LDAP_TLS=false"
+    volumes:
+      - "ldap_data:/var/lib/ldap/"
+      - "./example-shib/ldap/etc/ldap/edu/:/usr/local/ldap/edu/"
+      - "./example-shib/ldap/etc/ldap/example.ac.uk.ldif:/usr/local/ldap/example.ac.uk.ldif:ro"
+    expose:
+      - "389"
+
 networks:
-  example:
+  shibnet:
     driver: "bridge"

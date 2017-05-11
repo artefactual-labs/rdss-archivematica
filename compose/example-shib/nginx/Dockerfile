@@ -11,9 +11,9 @@ ENV SHIBBOLETH_RESPONDER_PATH "/Shibboleth.sso"
 
 # Copy nginx customizations
 COPY etc/nginx/shib_clear_headers /etc/nginx/
+COPY etc/nginx/shib_fastcgi_params /etc/nginx/
 COPY etc/nginx/conf.d/* /etc/nginx/conf.d/
 COPY etc/nginx/conf.d/default.conf.tpl /etc/nginx/conf.d/default.conf
-COPY build/archivematica.conf /etc/nginx/conf.d/
 
 # Copy Shibboleth customizations
 COPY etc/shibboleth/* /etc/shibboleth/
@@ -30,3 +30,10 @@ RUN rm -f /var/log/shibboleth/shibd*.log && \
 COPY build/$DOMAIN_NAME-ca.crt /usr/local/share/ca-certificates/$DOMAIN_NAME/
 COPY build/$DOMAIN_NAME-ca.crt /etc/shibboleth/sp-ca-cert.pem
 RUN update-ca-certificates
+
+# Ensure the nginx user exists and belongs to the shibd group
+RUN useradd -s /bin/nologin nginx && usermod -G _shibd nginx
+
+# Override shibd supervisor config to allow nginx user to access sockets
+RUN sed -i 's/socket_mode=0600/socket_mode=0660/' \
+	/etc/supervisor/conf.d/shibboleth.conf

@@ -21,6 +21,7 @@ if [ ! -d ${SHIB_IDP_DIR} ] ; then
 		unicon/shibboleth-idp /setup/bin/init-example-idp.sh
 	
 	# Ensure that we still have perms on the customized output
+	# TODO I really don't like having sudo here, is there a way to avoid?
 	sudo chown -R $(id -u):$(id -g) ${BUILD_DIR}
 	chmod -R u+rwX ${BUILD_DIR}
 fi
@@ -105,8 +106,3 @@ if [ ! -f "${SHIB_IDP_DIR}/credentials/idp-signing.crt" ] ; then
 	cp -p "${BUILD_DIR}/${IDP_HOSTNAME}.key" \
 		"${SHIB_IDP_DIR}/credentials/idp-signing.key"
 fi
-
-# Build our custom Docker image
-docker build --tag="arkivum/example-shib-idp" \
-	--build-arg DOMAIN_NAME="${DOMAIN_NAME}" \
-	.

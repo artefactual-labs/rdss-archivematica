@@ -19,8 +19,8 @@ RUN update-ca-trust
 
 # Also update JRE trusted certs so Tomcat trusts it too
 COPY build/$DOMAIN_NAME-ca.cer /tmp/
-RUN chmod +x /opt/zulu8.20.0.5-jdk8.0.121-linux_x64/bin/keytool && \
-	/opt/zulu8.20.0.5-jdk8.0.121-linux_x64/bin/keytool \
+RUN chmod +x /opt/zulu8.20.0.5-jdk8.0.121-linux_x64/bin/keytool
+RUN /opt/zulu8.20.0.5-jdk8.0.121-linux_x64/bin/keytool \
 	-import -noprompt -trustcacerts -alias $DOMAIN_NAME \
 	-file /tmp/$DOMAIN_NAME-ca.cer \
 	-keystore  /opt/zulu8.20.0.5-jdk8.0.121-linux_x64/jre/lib/security/cacerts \
