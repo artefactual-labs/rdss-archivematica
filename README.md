@@ -17,7 +17,7 @@ https://github.com/artefactual/archivematica-sampledata | master | Sample data
 
 ## Development environment
 
-Open [the compose/dev folder](compose/dev) to see more details.
+Open [the compose folder](compose) to see more details.
 
 ## AWS environment
 
