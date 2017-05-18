@@ -2,12 +2,14 @@
 
 BUILD_DIR=$(pwd)/build
 
-SHIB_IDP_DIR=${BUILD_DIR}/../../idp/build/customized-shibboleth-idp/
+SHIB_DIR="${BUILD_DIR}/../../../shib"
+SHIB_IDP_DIR="${SHIB_DIR}/idp/build/customized-shibboleth-idp/"
+
 SHIB_SP1_DIR=${BUILD_DIR}/sp1
 
 DOMAIN_NAME=${DOMAIN_NAME:-"example.ac.uk"}
 
-CA_DIR=${BUILD_DIR}/../../ca
+CA_DIR=${SHIB_DIR}/ca
 
 SP1_HOSTNAME="sp1.${DOMAIN_NAME}"
 
@@ -61,12 +63,14 @@ EOF
 fi
 
 # Generate certs
-if [ ! -f ${SHIB_SP1_DIR}/sp1/sp1_cert.pem ] ; then
+if [ ! -f "${BUILD_DIR}/${DOMAIN_NAME}-ca.crt" ] ; then
 	pushd "${CA_DIR}"
 	tstamp="$(date +"%Y%m%d%H%M")"
 	./sign.sh "${SP1_HOSTNAME}.${tstamp}" "${BUILD_DIR}/${SP1_HOSTNAME}.csr"
+	pushd "domains/${DOMAIN_NAME}"
 	cp "certs/${SP1_HOSTNAME}.${tstamp}.crt" "${SHIB_SP1_DIR}/sp1/sp1_cert.pem"
 	cp "certs/${DOMAIN_NAME}-ca.crt" "${BUILD_DIR}/${DOMAIN_NAME}-ca.crt"
+	popd
 	popd
 fi
 

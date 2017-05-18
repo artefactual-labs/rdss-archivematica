@@ -1,11 +1,13 @@
 #!/bin/bash
 
 BUILD_DIR=$(pwd)/build
-SHIB_IDP_DIR=${BUILD_DIR}/../../idp/build/customized-shibboleth-idp/
 
-DOMAIN_NAME="example.ac.uk"
+SHIB_DIR="${BUILD_DIR}/../../../shib"
+SHIB_IDP_DIR="${SHIB_DIR}/idp/build/customized-shibboleth-idp/"
 
-CA_DIR=${BUILD_DIR}/../../ca
+DOMAIN_NAME=${DOMAIN_NAME:-"example.ac.uk"}
+
+CA_DIR=${SHIB_DIR}/ca
 
 NGINX_HOSTNAME="myapp.${DOMAIN_NAME}"
 
@@ -56,7 +58,9 @@ if [ ! -f ${BUILD_DIR}/sp-cert.pem ] ; then
 	pushd "${CA_DIR}"
 	tstamp="$(date +"%Y%m%d%H%M")"
 	./sign.sh "${NGINX_HOSTNAME}.${tstamp}" "${BUILD_DIR}/${NGINX_HOSTNAME}.csr"
+	pushd "domains/${DOMAIN_NAME}"
 	cp "certs/${NGINX_HOSTNAME}.${tstamp}.crt" "${BUILD_DIR}/sp-cert.pem"
+	popd
 	popd
 fi
 
@@ -95,21 +99,20 @@ if [ ! -f ${BUILD_DIR}/sp-web-cert.pem ] ; then
 	pushd "${CA_DIR}"
 	tstamp="$(date +"%Y%m%d%H%M")"
 	./sign.sh "web.${NGINX_HOSTNAME}.${tstamp}" "${BUILD_DIR}/web.${NGINX_HOSTNAME}.csr"
+	pushd "domains/${DOMAIN_NAME}"
 	cp "certs/web.${NGINX_HOSTNAME}.${tstamp}.crt" "${BUILD_DIR}/sp-web-cert.pem"
+	popd
 	popd
 fi
 
-# Copy our CA certificate
-if [ ! -f ${BUILD_DIR}/${DOMAIN_NAME}-ca.crt ] ; then
-	cp "${CA_DIR}/certs/${DOMAIN_NAME}-ca.crt" "${BUILD_DIR}/${DOMAIN_NAME}-ca.crt"
-fi
+# Use templated shibboleth-nginx image to build image for this domain and SP with our example application
+pushd ${BUILD_DIR}/../../../shib/nginx/ && ./build.sh \
+	-d ${DOMAIN_NAME} \
+	-c "$(readlink -f ${CA_DIR}/domains/${DOMAIN_NAME}/certs/${DOMAIN_NAME}-ca.crt)" \
+	-k "${BUILD_DIR}/sp-key.pem" \
+	-n "$(readlink -f ${BUILD_DIR}/../etc/nginx/conf.d/example.conf.tpl)" \
+	-s "${BUILD_DIR}/sp-cert.pem" \
+	-w "${BUILD_DIR}/sp-web-cert.pem" \
+	-x "$(readlink -f ${BUILD_DIR}/../etc/shibboleth/shibboleth2.xml.tpl)" \
+&& popd
 
-# Copy Shibboleth IdP metadata into our build dir
-rm -f ${BUILD_DIR}/idp-metadata.xml
-cp -p ${SHIB_IDP_DIR}/metadata/idp-metadata.xml \
-	${BUILD_DIR}/idp-metadata.xml
-
-# Build our custom Docker image
-docker build --tag="arkivum/shibboleth-nginx" \
-	--build-arg DOMAIN_NAME="${DOMAIN_NAME}" \
-	.

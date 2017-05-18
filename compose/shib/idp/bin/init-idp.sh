@@ -2,12 +2,24 @@
 
 DOMAIN_NAME=${DOMAIN_NAME:-"example.ac.uk"}
 
+IDP_DOMAIN=${DOMAIN_NAME}
+IDP_DOMAIN_BASEDN="$(echo -n DC=${DOMAIN_NAME} | sed 's#[.]#,DC=#g')"
+IDP_HOSTNAME=${IDP_HOSTNAME:-"idp.${DOMAIN_NAME}"}
+IDP_LDAP_HOSTNAME=${IDP_LDAP_HOSTNAME:-"ldap.${DOMAIN_NAME}"}
+
 export JAVA_HOME=/opt/jre-home
 export PATH=$PATH:$JAVA_HOME/bin
 
+# Generate idp.properties based on template and env vars
+sed "s/[\$]{IDP_DOMAIN_BASEDN}/${IDP_DOMAIN_BASEDN}/g" /setup/conf/idp.properties.tpl | \
+	sed "s/[\$]{IDP_DOMAIN}/${IDP_DOMAIN}/g" | \
+	sed "s/[\$]{IDP_HOSTNAME}/${IDP_HOSTNAME}/g" | \
+	sed "s/[\$]{IDP_LDAP_HOSTNAME}/${IDP_LDAP_HOSTNAME}/g" > /tmp/idp.properties
+
+# Change into the Shibboleth IdP bin directory ready for the build
 cd /opt/shibboleth-idp/bin
 
-# Remove existing config to build starts with an empty config
+# Remove existing config so build starts with an empty config
 rm -r ../conf/
 
 # Hard-code the build parameters for our example IdP
@@ -17,7 +29,7 @@ rm -r ../conf/
 	-Didp.host.name=idp.${DOMAIN_NAME} \
 	-Didp.keystore.password=12345 \
 	-Didp.sealer.password=12345 \
-	-Didp.merge.properties=/setup/conf/example-idp.properties \
+	-Didp.merge.properties=/tmp/idp.properties \
 	metadata-gen
 
 mkdir -p /ext-mount/customized-shibboleth-idp/conf/

@@ -1,7 +1,9 @@
 
 # Required params
-idp.scope=example.ac.uk
-idp.entityID=https://idp.example.ac.uk/idp/shibboleth
+idp.scope=${IDP_DOMAIN}
+idp.entityID=https://${IDP_HOSTNAME}/idp/shibboleth
+idp.ldap.basedn=${IDP_DOMAIN_BASEDN}
+idp.ldap.host=${IDP_LDAP_HOSTNAME}
 idp.sealer.keyPassword=12345
 idp.sealer.storePassword=12345
 

@@ -4,13 +4,13 @@ RANDFILE         = /dev/urandom
 default_ca       = CA_default
 
 [ CA_default ]
-dir              = .
+dir              = ${DOMAIN_DIR}
 certs            = $dir/certs
 new_certs_dir    = $dir/newcerts
 crl_dir          = $dir/crl
 database         = $dir/db/index.txt
-private_key      = $dir/private/example.ac.uk-ca.key
-certificate      = $dir/certs/example.ac.uk-ca.crt
+private_key      = $dir/private/${CA_NAME}.key
+certificate      = $dir/certs/${CA_NAME}.crt
 serial           = $dir/db/serial
 crl              = $dir/crl.pem
 RANDFILE         = $dir/private/.rand
@@ -56,7 +56,7 @@ emailAddress_max        = 64
 
 [ v3_ext ]
 authorityKeyIdentifier  = keyid,issuer
-basicConstraints        =CA:FALSE
+basicConstraints        = CA:FALSE
 keyUsage                = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
 
 [ v3_req ]
@@ -64,7 +64,7 @@ basicConstraints = CA:FALSE
 keyUsage         = nonRepudiation, digitalSignature, keyEncipherment
 
 [ v3_ca ]
-basicConstraints        = critical, CA:true, pathlen:0 
+basicConstraints        = critical, CA:true, pathlen:0
 nsCertType              = sslCA
 keyUsage                = cRLSign, keyCertSign
 extendedKeyUsage        = serverAuth, clientAuth

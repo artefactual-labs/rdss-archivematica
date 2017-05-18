@@ -10,13 +10,59 @@ volumes:
 
 services:
 
-  # Override main nginx config, linking it to our demo services
-  nginx:
-    image: "arkivum/shibboleth-nginx"
+  # Shibboleth IdP service for the domain
+  idp:
+    image: "arkivum/shibboleth-idp:${DOMAIN_NAME}"
     build:
-      context: "./example-shib/nginx/"
+      context: "./shib/idp/"
       args:
         - DOMAIN_NAME
+    container_name: "idp.${DOMAIN_NAME}"
+    hostname: "idp"
+    domainname: "${DOMAIN_NAME}"
+    networks:
+      - "shibnet"
+    environment:
+      - "JETTY_BROWSER_SSL_KEYSTORE_PASSWORD=12345"
+      - "JETTY_BACKCHANNEL_SSL_KEYSTORE_PASSWORD=12345"
+    volumes:
+      - "idp_credentials:/opt/shibboleth-idp/credentials"
+      - "idp_logs:/opt/shibboleth-idp/logs"
+      # Provide our own IdP metadata file, configured for our SPs
+      - "./example-shib/idp/build/metadata-providers.xml:/opt/shibboleth-idp/conf/metadata-providers.xml:ro"
+    expose:
+      - "4443"
+      - "8443"
+    ports:
+      - "${IDP_EXTERNAL_IP}:443:4443"
+    depends_on:
+      - "example-sp"
+      - "ldap"
+    links:
+      - "example-sp:sp1.${DOMAIN_NAME}"
+      - "ldap:ldap.${DOMAIN_NAME}"
+
+  # LDAP service for the given domain
+  ldap:
+    image: "osixia/openldap"
+    hostname: "ldap"
+    domainname: "${DOMAIN_NAME}"
+    networks:
+      - "shibnet"
+    environment:
+      - "LDAP_DOMAIN=${DOMAIN_NAME}"
+      - "LDAP_ORGANISATION=${DOMAIN_ORGANISATION}"
+      - "LDAP_TLS=false"
+    volumes:
+      - "ldap_data:/var/lib/ldap/"
+      - "./shib/ldap/etc/ldap/edu/:/usr/local/ldap/edu/"
+      - "./shib/ldap/build/demo-users.ldif:/usr/local/ldap/demo-users.ldif:ro"
+    expose:
+      - "389"
+
+  # Override main nginx config, linking it to our demo services
+  nginx:
+    image: "arkivum/shibboleth-nginx:${DOMAIN_NAME}"
     container_name: "myapp.${DOMAIN_NAME}"
     hostname: "myapp"
     domainname: "${DOMAIN_NAME}"
@@ -42,37 +88,7 @@ services:
       - "example-app"
     links:
       - "example-app"
-      - "example-idp:idp.${DOMAIN_NAME}"
-
-  # Shibboleth IdP service for the domain
-  example-idp:
-    image: "arkivum/example-shib-idp"
-    build:
-      context: "./example-shib/idp/"
-      args:
-        - DOMAIN_NAME
-    container_name: "idp.${DOMAIN_NAME}"
-    hostname: "idp"
-    domainname: "${DOMAIN_NAME}"
-    networks:
-      - "shibnet"
-    environment:
-      - "JETTY_BROWSER_SSL_KEYSTORE_PASSWORD=12345"
-      - "JETTY_BACKCHANNEL_SSL_KEYSTORE_PASSWORD=12345"
-    volumes:
-      - "idp_credentials:/opt/shibboleth-idp/credentials"
-      - "idp_logs:/opt/shibboleth-idp/logs"
-    expose:
-      - "4443"
-      - "8443"
-    ports:
-      - "${IDP_EXTERNAL_IP}:443:4443"
-    depends_on:
-      - "example-sp"
-      - "ldap"
-    links:
-      - "example-sp:sp1.${DOMAIN_NAME}"
-      - "ldap:ldap.${DOMAIN_NAME}"
+      - "idp:idp.${DOMAIN_NAME}"
 
   # Demo Shibboleth SP for the given domain, which uses djangosaml2
   example-sp:
@@ -108,24 +124,6 @@ services:
       - "./example-shib/myapp/src/myapp/:/usr/django/app/:ro"
     expose:
       - "8000"
-
-  # LDAP service for the given domain
-  ldap:
-    image: "osixia/openldap"
-    hostname: "ldap"
-    domainname: "${DOMAIN_NAME}"
-    networks:
-      - "shibnet"
-    environment:
-      - "LDAP_DOMAIN=${DOMAIN_NAME}"
-      - "LDAP_ORGANISATION=${DOMAIN_ORGANISATION}"
-      - "LDAP_TLS=false"
-    volumes:
-      - "ldap_data:/var/lib/ldap/"
-      - "./example-shib/ldap/etc/ldap/edu/:/usr/local/ldap/edu/"
-      - "./example-shib/ldap/etc/ldap/example.ac.uk.ldif:/usr/local/ldap/example.ac.uk.ldif:ro"
-    expose:
-      - "389"
 
 networks:
   shibnet:

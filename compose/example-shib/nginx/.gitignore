@@ -1,3 +1,5 @@
 # Ignore build files
-
 build/
+
+# Don't commit non-templated Dockerfile
+Dockerfile

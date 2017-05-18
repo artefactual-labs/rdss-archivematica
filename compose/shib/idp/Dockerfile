@@ -8,7 +8,7 @@ ARG DOMAIN_NAME
 # Copy the Shibboleth IdP files
 COPY build/customized-shibboleth-idp/ /opt/shibboleth-idp/
 
-# Copy config files customized for our example deployment
+# Copy config files customized for our deployment
 COPY conf/* /opt/shibboleth-idp/conf/
 COPY images/* /opt/shibboleth-idp/webapp/images/
 COPY messages/* /opt/shibboleth-idp/messages/

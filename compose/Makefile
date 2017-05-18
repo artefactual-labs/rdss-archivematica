@@ -22,7 +22,14 @@ all: destroy bootstrap list
 bootstrap: up
 	$(foreach DIR, $(COMPOSE_DIRS), $(MAKE) -C $(DIR) $@ ;)
 
-build config destroy:
+build destroy:
+	# Process the common shib dir first
+	$(MAKE) -C shib $@
+	# Process each of the relevant compose dirs
+	$(foreach DIR, $(COMPOSE_DIRS), $(MAKE) -C $(DIR) $@ ;)
+	@sleep 10
+
+config:
 	$(foreach DIR, $(COMPOSE_DIRS), $(MAKE) -C $(DIR) $@ ;)
 	@sleep 10
 
@@ -36,10 +43,10 @@ watch:
 	docker-compose logs -f
 
 watch-idp:
-	docker-compose logs -f example-idp
+	docker-compose logs -f idp
 
 watch-nginx:
-	docker-compose logs -f 
+	docker-compose logs -f nginx
 
 watch-sp:
 	docker-compose logs -f example-sp

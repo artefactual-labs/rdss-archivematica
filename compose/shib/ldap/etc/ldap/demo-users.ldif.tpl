@@ -1,16 +1,16 @@
-dn: OU=physics,DC=example,DC=ac,DC=uk
+dn: OU=physics,${LDAP_BASEDN}
 objectClass: top
 objectClass: organizationalUnit
 objectClass: eduOrg
 ou: physics
 
-dn: OU=socsci,DC=example,DC=ac,DC=uk
+dn: OU=socsci,${LDAP_BASEDN}
 objectClass: top
 objectClass: organizationalUnit
 objectClass: eduOrg
 ou: socsci
 
-dn: CN=Alice Arnold,OU=physics,DC=example,DC=ac,DC=uk
+dn: CN=Alice Arnold,OU=physics,${LDAP_BASEDN}
 objectClass: top
 objectClass: person
 objectClass: inetOrgPerson
@@ -21,12 +21,12 @@ eduPersonPrincipalName: aa
 eduPersonScopedAffiliation: staff
 eduPersonTargetedID: 92395ca4-2ac5-11e7-8b0f-1779ed21e50b
 givenName: Alice
-mail: alice.arnold@physics.example.ac.uk
+mail: alice.arnold@physics.${LDAP_DOMAIN}
 ou: physics
 sn: Arnold
 userPassword: aa12345
 
-dn: CN=Bert Bellwether,OU=socsci,DC=example,DC=ac,DC=uk
+dn: CN=Bert Bellwether,OU=socsci,${LDAP_BASEDN}
 objectClass: top
 objectClass: person
 objectClass: inetOrgPerson
@@ -37,7 +37,7 @@ eduPersonPrincipalName: bb
 eduPersonScopedAffiliation: staff
 eduPersonTargetedID: cb712a42-2ac5-11e7-86a1-9fb67307f507
 givenName: Bert
-mail: bert.bellwether@socsci.example.ac.uk
+mail: bert.bellwether@socsci.${LDAP_DOMAIN}
 ou: socsci
 sn: Bellwether
 userPassword: bb12345

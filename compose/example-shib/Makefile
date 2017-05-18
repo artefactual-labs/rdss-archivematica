@@ -4,49 +4,60 @@ SUB_DIRS := $(sort $(wildcard */))
 
 BASE_DIR ?= ${CURDIR}
 
-DEFAULT_COMPOSE_FILE = "../docker-compose.example-shib.yml"
+DEFAULT_COMPOSE_FILE = $(shell realpath ../docker-compose.example-shib.yml)
 
 COMPOSE_FILE ?= "${DEFAULT_COMPOSE_FILE}"
 
-all: destroy bootstrap
+DOMAIN_NAME ?= "example.ac.uk"
 
-bootstrap: up
+LDAP_DOMAIN = $(shell echo -n dc=$(DOMAIN_NAME) | sed 's/[.]/,dc=/g')
+
+all: destroy up bootstrap list
+
+bootstrap:
 	# Install LDAP edu schema
-	docker-compose exec ldap /usr/local/ldap/edu/install.sh
+	COMPOSE_FILE=$(COMPOSE_FILE) docker-compose exec ldap \
+		/usr/local/ldap/edu/install.sh
 	# Install LDAP demo users
-	docker-compose exec ldap \
+	COMPOSE_FILE=$(COMPOSE_FILE) docker-compose exec ldap \
 		ldapadd \
-			-D "cn=admin,dc=example,dc=ac,dc=uk" -w admin \
-			-f "/usr/local/ldap/example.ac.uk.ldif"
+			-D "cn=admin,$(LDAP_DOMAIN)" -w admin \
+			-f "/usr/local/ldap/demo-users.ldif"
 
 build:
 	# Prepare the image and configuration for each service
-	$(foreach DIR, $(SUB_DIRS), cd $(BASE_DIR)/$(DIR) && \
-			[ ! -f ./build.sh ] || ./build.sh && \
-			cd $(BASE_DIR) ;)
+	$(foreach DIR, $(SUB_DIRS), echo ">>> Entering '$(BASE_DIR)/$(DIR)' ... " && \
+		cd $(BASE_DIR)/$(DIR) && \
+		[ ! -f ./build.sh ] || ./build.sh && \
+		cd $(BASE_DIR) && \
+		echo ">>> Left '$(BASE_DIR)/$(DIR)'." ;)
 	# Build the services
 	# We specify compose file explicitly, we don't want to build any other
 	# container sets
 	COMPOSE_FILE=${DEFAULT_COMPOSE_FILE} docker-compose build
 	
 config:
-	docker-compose config
+	COMPOSE_FILE=$(COMPOSE_FILE) docker-compose config
 
 destroy:
 	# Stop containers and remove volumes
-	docker-compose stop
-	docker-compose down --volumes
-	# Clear all build files for IdP and SP
+	COMPOSE_FILE=$(COMPOSE_FILE) docker-compose down --volumes
+	# Clear all build files for IdP, nginx and SP
 	$(foreach DIR, idp nginx sp, sudo rm -Rf $(BASE_DIR)/$(DIR)/build/* ;)
 
 list:
-	docker-compose ps
+	COMPOSE_FILE=$(COMPOSE_FILE) docker-compose ps
 
 nuke-ca:
-	# Nuke the Example CA (not necessary for every rebuild)
+	# Nuke the Certificate Authority (not necessary for every rebuild)
 	cd $(BASE_DIR)/ca && ./nuke.sh && cd $(BASE_DIR)
 
-up: build
-	docker-compose up -d
+verify:
+	@echo "COMPOSE_DIRS = ${COMPOSE_DIRS}"
+	@echo "COMPOSE_FILE = ${COMPOSE_FILE}"
+	@echo "SHIBBOLETH_CONFIG = ${SHIBBOLETH_CONFIG}"
 
-.PHONY: all bootstrap build destroy list nuke-ca up
+up: build
+	COMPOSE_FILE=$(COMPOSE_FILE) docker-compose up -d
+
+.PHONY: all bootstrap build destroy list nuke-ca verify up
