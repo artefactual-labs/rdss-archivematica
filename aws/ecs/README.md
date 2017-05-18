@@ -109,15 +109,11 @@ Let's haver our Docker client log in the registry using the `registryId`. In thi
 
     $ eval $(aws ecr get-login --registry-ids 975238715549)
 
-Now we can build a Docker image and push it to the corresponding repository. We're planning to automate this process but for now you need to run the following commands based on the output of the previous step. E.g.:
+Build the Docker images and publish them with the following ocmmand:
 
-    $ docker build \
-        -t 975238715549.dkr.ecr.eu-west-2.amazonaws.com/rdss-archivematica/channel-adapter:latest \
-        ../../src/rdss-archivematica-channel-adapter
-    $ docker push \
-        975238715549.dkr.ecr.eu-west-2.amazonaws.com/rdss-archivematica/channel-adapter:latest
+    $ make publish-images
 
-Confirm that the image is now available in the repository:
+You can confirm that the images have been pushed properly, e.g. the following command lists the images available in the channel adapter repository:
 
     $ aws ecr list-images --repository-name rdss-archivematica/channel-adapter
     {

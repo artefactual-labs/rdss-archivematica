@@ -12,6 +12,12 @@
     },
     "memory": 256,
     "name": "${container_name}",
+    "portMappings": [
+      {
+        "containerPort": 6379,
+        "hostPort": 6379
+      }
+    ],
     "user": "redis"
   }
 ]

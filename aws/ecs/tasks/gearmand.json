@@ -1,14 +1,28 @@
-{
-  "command": [
-    "--queue-type=redis",
-    "--redis-server=redis",
-    "--redis-port=6379"
-  ],
-  "essential": true,
-  "image": "artefactual/gearmand:1.1.15-alpine",
-  "links": [
-    "redis"
-  ],
-  "name": "gearmand",
-  "user": "gearman"
-}
+[
+  {
+    "command": [
+      "--queue-type=redis",
+      "--redis-server=127.0.0.1",
+      "--redis-port=6379"
+    ],
+    "cpu": 256,
+    "essential": true,
+    "image": "${image_url}",
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-group": "${log_group_name}",
+        "awslogs-region": "${log_group_region}"
+      }
+    },
+    "memory": 256,
+    "name": "${container_name}",
+    "portMappings": [
+      {
+        "containerPort": 4730,
+        "hostPort": 4730
+      }
+    ],
+    "user": "gearman"
+  }
+]

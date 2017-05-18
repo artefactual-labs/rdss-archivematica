@@ -106,6 +106,16 @@ chmod 644 /etc/init/ecssd_agent.conf
 initctl reload-configuration
 
 start ecssd_agent
+
+yum -y install nfs-utils
+service rpcbind start
+mkdir /mnt/nfs
+timeout -s9 10 mount -t nfs4 nfs.rdss-archivematica.test:/mnt/nfs0 /mnt/nfs
+
+wget  https://gist.github.com/mamedin/624b520477173daae628fc9913bc9aa4/raw -O /usr/local/bin/test_nfs
+chmod +x /usr/local/bin/test_nfs
+echo "  *  *  *  *  * root /usr/local/bin/test_nfs" >> /etc/crontab
+
 EOF
 }
 
@@ -119,7 +129,7 @@ resource "aws_key_pair" "auth" {
 resource "aws_security_group" "lb_sg" {
   description = "Controls access to the application ALB"
   vpc_id      = "${aws_vpc.main.id}"
-  name         = "ecs-lb-sg"
+  name        = "ecs-lb-sg"
 
   ingress {
     protocol    = "tcp"
@@ -261,6 +271,32 @@ resource "aws_ecs_service" "redis" {
   depends_on      = ["aws_iam_role_policy.ecs_service"]
 }
 
+### ECS » Gearmand
+
+data "template_file" "task_definition_gearmand" {
+  template = "${file("${path.module}/tasks/gearmand.json")}"
+
+  vars {
+    image_url        = "artefactual/gearmand:1.1.15-alpine"
+    container_name   = "gearmand"
+    log_group_region = "${var.aws_region}"
+    log_group_name   = "${aws_cloudwatch_log_group.archivematica.name}"
+  }
+}
+
+resource "aws_ecs_task_definition" "gearmand" {
+  family                = "gearmand"
+  container_definitions = "${data.template_file.task_definition_gearmand.rendered}"
+}
+
+resource "aws_ecs_service" "gearmand" {
+  name            = "gearmand"
+  cluster         = "${aws_ecs_cluster.main.id}"
+  task_definition = "${aws_ecs_task_definition.gearmand.arn}"
+  desired_count   = 1
+  depends_on      = ["aws_iam_role_policy.ecs_service"]
+}
+
 ## IAM
 
 resource "aws_iam_role" "ecs_service" {
@@ -396,7 +432,9 @@ resource "aws_alb_listener" "storage_service" {
   }
 }
 
-## CloudWatch Logs
+## CloudWatch
+
+### CloudWatch » Log groups
 
 resource "aws_cloudwatch_log_group" "archivematica" {
   name = "archivematica"

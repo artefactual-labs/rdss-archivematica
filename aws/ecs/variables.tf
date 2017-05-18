@@ -25,6 +25,7 @@ variable "instance_type" {
 
 variable "admin_cidr_ingress" {
   type = "list"
+
   description = <<EOF
 CIDR to allow tcp/22 ingress to EC2 instance, e.g.:
 - 216.58.193.67/32 (1 host)
@@ -54,10 +55,34 @@ variable "asg_min" {
 
 variable "asg_max" {
   description = "Max numbers of servers in ASG"
-  default     = "3"
+  default     = "1"
 }
 
 variable "asg_desired" {
   description = "Desired numbers of servers in ASG"
-  default     = "3"
+  default     = "1"
+}
+
+variable "nfs_ami" {
+  default     = "ami-b6daced2"
+}
+
+variable "nfs_fqdn_0" {
+  description = "The fqdn of nfs0"
+  default     = "nfs.rdss-archivematica.test"
+}
+
+variable "nfs_device_name_0" {
+  description = "Name of NFS device name to mount EBS volumen 0"
+  default     = "/dev/xvdf"
+}
+
+variable "nfs_blk_0" {
+  description = "Name of blk to mount EBS volumen 0"
+  default     = "xvdf"
+}
+
+variable "nfs_mount_point_0" {
+  description = "Name of mount point to mount EBS volumen 0"
+  default     = "/mnt/nfs0"
 }
