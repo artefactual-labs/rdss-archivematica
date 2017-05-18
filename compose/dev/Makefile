@@ -15,12 +15,17 @@ destroy:
 
 build:
 	# Specify compose file explicitly, we don't want to build any other container sets
-	COMPOSE_FILE=${DEFAULT_COMPOSE_FILE} docker-compose build
+	COMPOSE_FILE=$(DEFAULT_COMPOSE_FILE) docker-compose build
+
+bootstrap: build bootstrap-storage-service bootstrap-dashboard restart-mcp-services
 
 bootstrap-storage-service:
-	docker-compose exec mysql mysql -hlocalhost -uroot -p12345 -e "DROP DATABASE IF EXISTS SS;"
-	docker-compose exec mysql mysql -hlocalhost -uroot -p12345 -e "CREATE DATABASE SS;"
-	docker-compose exec mysql mysql -hlocalhost -uroot -p12345 -e "GRANT ALL ON SS.* TO 'archivematica'@'%' IDENTIFIED BY 'demo';"
+	# Wait for services to start properly to avoid race/timing problems
+	@sleep 30
+	docker-compose exec mysql mysql -hlocalhost -uroot -p12345 -e "\
+		DROP DATABASE IF EXISTS SS; \
+		CREATE DATABASE SS; \
+		GRANT ALL ON SS.* TO 'archivematica'@'%' IDENTIFIED BY 'demo';"
 	docker-compose run \
 		--rm \
 		--entrypoint /src/storage_service/manage.py \
@@ -36,9 +41,9 @@ bootstrap-storage-service:
 					--email="test@test.com" \
 					--api-key="test"
 
-bootstrap: build bootstrap-dashboard bootstrap-storage-service restart-mcp-services
-
 bootstrap-dashboard:
+	# Wait for services to start properly to avoid race/timing problems
+	@sleep 30
 	docker-compose exec mysql mysql -hlocalhost -uroot -p12345 -e "\
 		DROP DATABASE IF EXISTS MCP; \
 		CREATE DATABASE MCP; \

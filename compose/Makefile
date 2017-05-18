@@ -17,9 +17,9 @@ override COMPOSE_FILE ?= $(shell echo \
 	| tr ' ' ':')
 export COMPOSE_FILE
 
-all: destroy bootstrap list
+all: destroy build up bootstrap list
 
-bootstrap: up
+bootstrap:
 	$(foreach DIR, $(COMPOSE_DIRS), $(MAKE) -C $(DIR) $@ ;)
 
 build destroy:
@@ -36,7 +36,7 @@ config:
 list:
 	docker-compose ps
 
-up: build
+up:
 	docker-compose up -d
 
 watch:
