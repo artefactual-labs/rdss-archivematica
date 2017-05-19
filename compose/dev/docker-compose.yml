@@ -14,7 +14,7 @@ services:
     image: "percona:5.6"
     user: "mysql"
     environment:
-      - "MYSQL_ROOT_PASSWORD=12345"
+      MYSQL_ROOT_PASSWORD: "12345"
     volumes:
       - "mysql_data:/var/lib/mysql"
     expose:
@@ -70,6 +70,29 @@ services:
       - "80"
       - "8000"
 
+  dynalite:
+    build:
+      context: "../../src/rdss-archivematica-channel-adapter/hack/minikine"
+      dockerfile: "dynalite.Dockerfile"
+    ports:
+      - "4567"
+    expose:
+      - "4567"
+
+  minikine:
+    build:
+      context: "../../src/rdss-archivematica-channel-adapter/hack/minikine"
+      dockerfile: "minikine.Dockerfile"
+    environment:
+      MINIKINE_STREAM_MAIN: "main"
+      MINIKINE_STREAM_INVALID: "invalid"
+      MINIKINE_STREAM_ERROR: "error"
+      MINIKINE_STREAM_SHARDS: "4"
+    ports:
+      - "4567"
+    expose:
+      - "4567"
+
   archivematica-mcp-server:
     build:
       context: "../../src/archivematica/src"
@@ -77,12 +100,15 @@ services:
     environment:
       DJANGO_SECRET_KEY: "12345"
       DJANGO_SETTINGS_MODULE: "settings.common"
+      ARCHIVEMATICA_MCPSERVER_CLIENT_USER: "archivematica"
+      ARCHIVEMATICA_MCPSERVER_CLIENT_PASSWORD: "demo"
+      ARCHIVEMATICA_MCPSERVER_CLIENT_HOST: "mysql"
+      ARCHIVEMATICA_MCPSERVER_CLIENT_DATABASE: "MCP"
+      ARCHIVEMATICA_MCPSERVER_MCPSERVER_MCPARCHIVEMATICASERVER: "gearmand:4730"
     volumes:
       - "../../src/archivematica/src/archivematicaCommon/:/src/archivematicaCommon/"
       - "../../src/archivematica/src/dashboard/:/src/dashboard/"
       - "../../src/archivematica/src/MCPServer/:/src/MCPServer/"
-      - "./etc/archivematica/archivematicaCommon/dbsettings:/etc/archivematica/archivematicaCommon/dbsettings:ro"
-      - "./etc/archivematica/MCPServer/serverConfig.conf:/etc/archivematica/MCPServer/serverConfig.conf:ro"
       - "archivematica_pipeline_data:/var/archivematica/sharedDirectory:rw"
     links:
       - "mysql"
@@ -97,14 +123,19 @@ services:
       DJANGO_SETTINGS_MODULE: "settings.common"
       NAILGUN_SERVER: "fits"
       NAILGUN_PORT: "2113"
+      ARCHIVEMATICA_MCPCLIENT_CLIENT_USER: "archivematica"
+      ARCHIVEMATICA_MCPCLIENT_CLIENT_PASSWORD: "demo"
+      ARCHIVEMATICA_MCPCLIENT_CLIENT_HOST: "mysql"
+      ARCHIVEMATICA_MCPCLIENT_CLIENT_DATABASE: "MCP"
+      ARCHIVEMATICA_MCPCLIENT_MCPCLIENT_ARCHIVEMATICACLIENTMODULES: "/src/MCPClient/lib/archivematicaClientModules"
+      ARCHIVEMATICA_MCPCLIENT_MCPCLIENT_CLIENTSCRIPTSDIRECTORY: "/src/MCPClient/lib/clientScripts/"
+      ARCHIVEMATICA_MCPCLIENT_MCPCLIENT_ELASTICSEARCHSERVER: "elasticsearch:9200"
+      ARCHIVEMATICA_MCPCLIENT_MCPCLIENT_MCPARCHIVEMATICASERVER: "gearmand:4730"
+      ARCHIVEMATICA_MCPCLIENT_MCPCLIENT_CLAMAV_SERVER: "clamavd:3310"
     volumes:
       - "../../src/archivematica/src/archivematicaCommon/:/src/archivematicaCommon/"
       - "../../src/archivematica/src/dashboard/:/src/dashboard/"
       - "../../src/archivematica/src/MCPClient/:/src/MCPClient/"
-      - "./etc/archivematica/archivematicaCommon/dbsettings:/etc/archivematica/archivematicaCommon/dbsettings:ro"
-      - "./etc/archivematica/MCPServer/serverConfig.conf:/etc/archivematica/MCPServer/serverConfig.conf:ro"
-      - "./etc/archivematica/MCPClient/clientConfig.conf:/etc/archivematica/MCPClient/clientConfig.conf:ro"
-      - "./etc/clamav/clamd.conf:/etc/clamav/clamd.conf:ro"
       - "archivematica_pipeline_data:/var/archivematica/sharedDirectory:rw"
     links:
       - "fits"
@@ -120,16 +151,18 @@ services:
       dockerfile: "dashboard.Dockerfile"
     environment:
       FORWARDED_ALLOW_IPS: "*"  # Specific to Gunicorn
-      DJANGO_SECRET_KEY: "12345"
       DJANGO_SETTINGS_MODULE: "settings.local"
-      DJANGO_ALLOWED_HOSTS: "*"
-      ARCHIVEMATICA_DASHBOARD_GEARMAN: "gearmand:4730"
+      ARCHIVEMATICA_DASHBOARD_DASHBOARD_DJANGO_SECRET_KEY: "12345"
+      ARCHIVEMATICA_DASHBOARD_DASHBOARD_DJANGO_ALLOWED_HOSTS: "*"
+      ARCHIVEMATICA_DASHBOARD_DASHBOARD_GEARMAN_SERVER: "gearmand:4730"
+      ARCHIVEMATICA_DASHBOARD_DASHBOARD_ELASTICSEARCH_SERVER: "elasticsearch:93200"
+      ARCHIVEMATICA_DASHBOARD_CLIENT_USER: "archivematica"
+      ARCHIVEMATICA_DASHBOARD_CLIENT_PASSWORD: "demo"
+      ARCHIVEMATICA_DASHBOARD_CLIENT_HOST: "mysql"
+      ARCHIVEMATICA_DASHBOARD_CLIENT_DATABASE: "MCP"
     volumes:
       - "../../src/archivematica/src/archivematicaCommon/:/src/archivematicaCommon/"
       - "../../src/archivematica/src/dashboard/:/src/dashboard/"
-      - "./etc/archivematica/archivematicaCommon/dbsettings:/etc/archivematica/archivematicaCommon/dbsettings:ro"
-      - "./etc/archivematica/MCPClient/clientConfig.conf:/etc/archivematica/MCPClient/clientConfig.conf:ro"
-      - "./etc/archivematica/MCPServer/serverConfig.conf:/etc/archivematica/MCPServer/serverConfig.conf:ro"
       - "archivematica_pipeline_data:/var/archivematica/sharedDirectory:rw"
     expose:
       - "8000"
@@ -162,12 +195,42 @@ services:
     build:
       context: "../../src/rdss-archivematica-channel-adapter"
     command: "consumer"
+    environment:
+      RDSS_ARCHIVEMATICA_ADAPTER_LOGGING.LEVEL: "debug"
+      RDSS_ARCHIVEMATICA_ADAPTER_AMCLIENT.URL: "http://archivematica-dashboard:8000"
+      RDSS_ARCHIVEMATICA_ADAPTER_AMCLIENT.USER: "demo"
+      RDSS_ARCHIVEMATICA_ADAPTER_AMCLIENT.KEY: "demo"
+      RDSS_ARCHIVEMATICA_ADAPTER_BROKER.QUEUES.MAIN: "main"
+      RDSS_ARCHIVEMATICA_ADAPTER_BROKER.QUEUES.INVALID: "invalid"
+      RDSS_ARCHIVEMATICA_ADAPTER_BROKER.QUEUES.ERROR: "error"
+      RDSS_ARCHIVEMATICA_ADAPTER_BROKER.BACKEND: "kinesis"
+      RDSS_ARCHIVEMATICA_ADAPTER_BROKER.KINESIS.TLS: "false"
+      RDSS_ARCHIVEMATICA_ADAPTER_BROKER.KINESIS.ENDPOINT: "http://minikine:4567"
+      RDSS_ARCHIVEMATICA_ADAPTER_BROKER.KINESIS.ENDPOINT_DYNAMODB: "http://dynalite:4567"
+      AWS_REGION: "kinalite-does-not-care"
+      AWS_ACCESS_KEY: "kinesis-does-not-care"
+      AWS_SECRET_KEY: "kinesis-does-not-care"
+    volumes:
+      - "archivematica_pipeline_data:/var/archivematica/sharedDirectory:rw"
     links:
       - "archivematica-dashboard"
+      - "minikine"
+      - "dynalite"
 
   rdss-archivematica-channel-adapter-publisher:
     build:
       context: "../../src/rdss-archivematica-channel-adapter"
     command: "publisher"
+    environment:
+      RDSS_ARCHIVEMATICA_ADAPTER_LOGGING.LEVEL: "debug"
+      RDSS_ARCHIVEMATICA_ADAPTER_BROKER.QUEUES.MAIN: "main"
+      RDSS_ARCHIVEMATICA_ADAPTER_BROKER.QUEUES.INVALID: "invalid"
+      RDSS_ARCHIVEMATICA_ADAPTER_BROKER.QUEUES.ERROR: "invalid"
+      RDSS_ARCHIVEMATICA_ADAPTER_BROKER.BACKEND: "kinesis"
+      RDSS_ARCHIVEMATICA_ADAPTER_BROKER.KINESIS.ENDPOINT: "http://minikine:4567"
+      AWS_REGION: "kinalite-does-not-care"
+      AWS_ACCESS_KEY: "kinesis-does-not-care"
+      AWS_SECRET_KEY: "kinesis-does-not-care"
     links:
       - "archivematica-dashboard"
+      - "minikine"
