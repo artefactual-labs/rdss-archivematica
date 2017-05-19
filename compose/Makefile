@@ -5,9 +5,12 @@ COMPOSE_DIRS=dev
 
 BASE_DIR ?= ${CURDIR}
 
-# Do we want to include the example-shibboleth services?
-ifdef EXAMPLE_SHIBBOLETH
-	override COMPOSE_DIRS += example-shib
+# Do we want to include any shibboleth services?
+ifeq ("$(SHIBBOLETH_CONFIG)", "archivematica")
+	override COMPOSE_DIRS += am-shib
+else ifeq ("$(SHIBBOLETH_CONFIG)", "example")
+	# Only build example services, not Archivematica
+	override COMPOSE_DIRS = example-shib
 endif
 
 # Set the docker-compose COMPOSE_FILE env var to include the config from each
@@ -24,7 +27,9 @@ bootstrap:
 
 build destroy:
 	# Process the common shib dir first
-	$(MAKE) -C shib $@
+	if [ "$(SHIBBOLETH_CONFIG)" != "" ] ; then \
+		$(MAKE) -C shib $@ ; \
+	fi
 	# Process each of the relevant compose dirs
 	$(foreach DIR, $(COMPOSE_DIRS), $(MAKE) -C $(DIR) $@ ;)
 	@sleep 10

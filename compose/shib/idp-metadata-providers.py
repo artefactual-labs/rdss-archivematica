@@ -1,8 +1,30 @@
 #!/usr/bin/env python
 
+"""
+This script is used to automatically generate the IdP metadata providers
+configuration from a list of Service Providers based on their metadata URL.
+The output is content for a metadata-providers.xml file suitable for use as
+part of the configuration of an Shibboleth IdP.
+
+Example input content:
+
+	{
+	  "am-dashboard" : {
+	    "metadata": "https://archivematica.${DOMAIN_NAME}/Shibboleth.sso/metadata"
+	  },
+	  "am-storage-service" : {
+	    "metadata": "https://archivematica.${DOMAIN_NAME}:8443/Shibboleth.sso/metadata"
+	  }
+	}
+
+Arguments:
+	This script expects a single argument, the path to the JSON file to read
+	input from.
+"""
+
+import json
 import os
 import sys
-import yaml
 
 # Check we got our service providers YAML file as the first param
 if len(sys.argv) == 1:
@@ -26,9 +48,9 @@ print ("""<?xml version="1.0"?>
 
 # For each of our services, output a MetadataProvider element
 with open(sp_conf_file, 'r') as f:
-   sp_conf = yaml.load(f)
-   for sp in sp_conf['service-providers']:
-      metadata_url = sp_conf['service-providers'][sp]['metadata'].replace(
+   sp_conf = json.load(f)
+   for sp in sp_conf:
+      metadata_url = sp_conf[sp]['metadata'].replace(
          '${DOMAIN_NAME}', os.getenv('DOMAIN_NAME', 'example.ac.uk'))
       print ("""
     <MetadataProvider xsi:type="FileBackedHTTPMetadataProvider"

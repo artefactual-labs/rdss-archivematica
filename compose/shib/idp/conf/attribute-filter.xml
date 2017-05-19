@@ -10,11 +10,11 @@
         <AttributeRule attributeID="cn">
             <PermitValueRule xsi:type="ANY" />
         </AttributeRule>
-        <AttributeRule attributeID="eduPersonEntitlement">
+        <AttributeRule attributeID="entitlement">
             <PermitValueRule xsi:type="ANY" />
         </AttributeRule>
         
-        <AttributeRule attributeID="eduPersonPrincipalName">
+        <AttributeRule attributeID="eppn">
             <PermitValueRule xsi:type="ANY" />
         </AttributeRule>
         
