@@ -71,7 +71,7 @@ services:
     expose:
       - "3310"
     volumes:
-      - "archivematica_pipeline_data:/var/archivematica/sharedDirectory:rw"
+      - "archivematica_pipeline_data:/var/archivematica/sharedDirectory:ro"
 
   nginx:
     image: "nginx:stable-alpine"
