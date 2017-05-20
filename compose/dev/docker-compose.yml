@@ -208,7 +208,7 @@ services:
   rdss-archivematica-channel-adapter-consumer:
     build:
       context: "../../src/rdss-archivematica-channel-adapter"
-    command: "consumer"
+    entrypoint: "go run main.go consumer"
     environment:
       RDSS_ARCHIVEMATICA_ADAPTER_LOGGING.LEVEL: "debug"
       RDSS_ARCHIVEMATICA_ADAPTER_AMCLIENT.URL: "http://archivematica-dashboard:8000"
@@ -224,17 +224,20 @@ services:
       AWS_REGION: "kinalite-does-not-care"
       AWS_ACCESS_KEY: "kinesis-does-not-care"
       AWS_SECRET_KEY: "kinesis-does-not-care"
-    volumes:
-      - "archivematica_pipeline_data:/var/archivematica/sharedDirectory:rw"
     links:
       - "archivematica-dashboard"
       - "minikine"
       - "dynalite"
+    volumes:
+      - "../../src/rdss-archivematica-channel-adapter:/go/src/github.com/JiscRDSS/rdss-archivematica-channel-adapter"
+      - "archivematica_pipeline_data:/var/archivematica/sharedDirectory:rw"
+    ports:
+      - "6060" # See net/http/pprof
 
   rdss-archivematica-channel-adapter-publisher:
     build:
       context: "../../src/rdss-archivematica-channel-adapter"
-    command: "publisher"
+    entrypoint: "go run main.go publisher"
     environment:
       RDSS_ARCHIVEMATICA_ADAPTER_LOGGING.LEVEL: "debug"
       RDSS_ARCHIVEMATICA_ADAPTER_BROKER.QUEUES.MAIN: "main"
@@ -248,3 +251,7 @@ services:
     links:
       - "archivematica-dashboard"
       - "minikine"
+    volumes:
+      - "../../src/rdss-archivematica-channel-adapter:/go/src/github.com/JiscRDSS/rdss-archivematica-channel-adapter"
+    ports:
+      - "6060" # See net/http/pprof
