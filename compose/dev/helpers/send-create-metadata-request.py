@@ -29,8 +29,16 @@ METADATA_CREATE_MESSAGE = {
 }
 
 
+def parse_endpoint_url(url):
+    try:
+        port = int(url)
+        return 'http://127.0.0.1:%d' % port
+    except ValueError:
+        return url
+
+
 def send_message(endpoint_url):
-    client = boto3.client('kinesis', region_name='eu-west-2', endpoint_url=endpoint_url)
+    client = boto3.client('kinesis', region_name='eu-west-2', endpoint_url=parse_endpoint_url(endpoint_url))
     response = client.put_record(
         StreamName='main',
         Data=json.dumps(METADATA_CREATE_MESSAGE),
