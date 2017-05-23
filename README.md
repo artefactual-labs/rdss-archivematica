@@ -12,7 +12,7 @@ URL | Branch | Components
 --- | ------ | ----------
 https://github.com/JiscRDSS/archivematica | qa/jisc | MCPServer, MCPClient, Dashboard
 https://github.com/JiscRDSS/archivematica-storage-service | qa/jisc | Storage Service
-https://github.com/JiscRDSS/rdss-archivematica-channel-adapter | dev/consumer-basic | Channel Adapter
+https://github.com/JiscRDSS/rdss-archivematica-channel-adapter | master | Channel Adapter
 https://github.com/artefactual/archivematica-sampledata | master | Sample data
 
 ## Development environment

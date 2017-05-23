@@ -1,7 +1,7 @@
 ROOT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 AM_BRANCH := "qa/jisc"
 SS_BRANCH := "qa/jisc"
-AD_BRANCH := "dev/consumer-basic"
+AD_BRANCH := "master"
 
 build: build-images
 
