@@ -43,7 +43,7 @@ resource "aws_iam_role_policy" "ecs_nfs" {
       ],
       "Resource": [
         "*"
-      ]	
+      ]
     }
   ]
 }
@@ -66,7 +66,7 @@ resource "aws_security_group" "nfs_sg" {
     protocol    = "tcp"
     from_port   = 22
     to_port     = 22
-    cidr_blocks = ["${aws_vpc.main.cidr_block}"]
+    cidr_blocks = "${var.admin_cidr_ingress}"
   }
 
   ingress {
@@ -126,7 +126,7 @@ fi
 # wait for ebs volume to be attached
 #wait until volume is available
 n=0
-until [ $n -ge 5 ] 
+until [ $n -ge 5 ]
   do
     # self-attach ebs volume
     aws --region "${var.aws_region}" ec2 attach-volume --volume-id $DISK0 --instance-id $INSTANCE_ID --device "${var.nfs_device_name_0}"
