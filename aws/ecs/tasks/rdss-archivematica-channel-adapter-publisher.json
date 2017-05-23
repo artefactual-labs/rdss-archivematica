@@ -1,0 +1,45 @@
+[
+  {
+    "command": [
+      "publisher"
+    ],
+    "cpu": 256,
+    "environment": [
+      {
+        "name": "RDSS_ARCHIVEMATICA_ADAPTER_LOGGING.LEVEL",
+        "value": "debug"
+      },
+      {
+        "name": "RDSS_ARCHIVEMATICA_ADAPTER_BROKER.QUEUES.MAIN",
+        "value": "main"
+      },
+      {
+        "name": "RDSS_ARCHIVEMATICA_ADAPTER_BROKER.QUEUES.INVALID",
+        "value": "invalid"
+      },
+      {
+        "name": "RDSS_ARCHIVEMATICA_ADAPTER_BROKER.QUEUES.ERROR",
+        "value": "error"
+      },
+      {
+        "name": "RDSS_ARCHIVEMATICA_ADAPTER_BROKER.BACKEND",
+        "value": "kinesis"
+      },
+      {
+        "name": "AWS_REGION",
+        "value": "${aws_region}"
+      }
+    ],
+    "essential": true,
+    "image": "${image_url}",
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-group": "${log_group_name}",
+        "awslogs-region": "${log_group_region}"
+      }
+    },
+    "memory": 512,
+    "name": "${container_name}"
+  }
+]

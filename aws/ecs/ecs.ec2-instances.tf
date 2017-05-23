@@ -144,3 +144,9 @@ resource "aws_iam_role_policy" "instance" {
 }
 EOF
 }
+
+resource "aws_iam_policy_attachment" "ec2_instance_managed_policy" {
+  name       = "ec2-instance-managed-policy"
+  roles      = ["${aws_iam_role.app_instance.name}"]
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"
+}
