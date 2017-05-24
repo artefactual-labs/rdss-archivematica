@@ -35,7 +35,13 @@ This assumes that the files in [etc/ldap/edu](etc/ldap/edu) have been mounted as
 Demo Users
 -----------
 
-There are two demo user accounts, "Alice Arnold" and "Bert Bellwether". Alice has the RDSS entitlement of `preservation-user` and Bert has the entitlement `preservation-admin`. See the [LDIF template](etc/ldap/demo-users.ldif.tpl) for details of their credentials.
+There are 3 demo user accounts, "Alice Arnold", "Bert Bellwether" and "Charlie Cooper".
+
+* Alice has the entitlements of `matlab-user` and `preservation-user`, allowing her to access Archivematica as a normal user.
+* Bert has the entitlement `preservation-admin`, allowing him to access Archivematica as an admin user.
+* Charlie has the entitlement `matlab-user`, allowing him no access to Archivematica.
+
+See the [LDIF template](etc/ldap/demo-users.ldif.tpl) for details of their credentials.
 
 For these accounts the `eduPersonPrincipalName` (`eppn` for short) gets used as the Archivematica username. This is configurable in the IdP and SP layers, should it need to be changed.
 
