@@ -10,6 +10,13 @@
           <Host applicationId="archivematica-dashboard"
             name="${NGINX_HOSTNAME:-archivematica.example.ac.uk}"
             scheme="https" port="443">
+            <!-- Access to the Archivematica Dashboard requires preservation entitlement -->
+            <AccessControl>
+                <OR>
+                    <Rule require="entitlement">preservation-admin</Rule>
+                    <Rule require="entitlement">preservation-user</Rule>
+                </OR>
+            </AccessControl>
             <!-- Don't apply access control to api and media resources -->
             <Path name="api" authType="None" requireSession="false"/>
             <Path name="media" authType="None" requireSession="false"/>
@@ -17,6 +24,14 @@
           <!-- Declare the host for the Archivematica Storage Service on port 8443 -->
           <Host applicationId="archivematica-storage-service"
             name="${NGINX_HOSTNAME:-archivematica.example.ac.uk}"
+            scheme="https" port="8443">
+            <!-- Access to the Archivematica Storage Service requires preservation entitlement -->
+            <AccessControl>
+                <OR>
+                    <Rule require="entitlement">preservation-admin</Rule>
+                    <Rule require="entitlement">preservation-user</Rule>
+                </OR>
+            </AccessControl>
             <!-- Don't apply access control to api and static resources -->
             <Path name="api" authType="None" requireSession="false"/>
             <Path name="static" authType="None" requireSession="false"/>
