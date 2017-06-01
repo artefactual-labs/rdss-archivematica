@@ -17,8 +17,8 @@ services:
       MINIO_ACCESS_KEY: "AKIAIOSFODNN7EXAMPLE"
       MINIO_SECRET_KEY: "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
     volumes:
-      - "./etc/minio:/root/.minio"
-      - "./s3:/export"
+      - "./dev/etc/minio:/root/.minio"
+      - "./dev/s3:/export"
     ports:
       - "9000"
     expose:
