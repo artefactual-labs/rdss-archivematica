@@ -1,26 +1,31 @@
 .DEFAULT_GOAL := build
 
-all: destroy build up bootstrap
+BASE_DIR ?= ${CURDIR}
+
+DEFAULT_COMPOSE_FILE = "../docker-compose.dev.yml"
+
+COMPOSE_FILE ?= "${DEFAULT_COMPOSE_FILE}"
+
+all: destroy bootstrap
+	docker-compose ps
 
 destroy:
 	docker-compose stop
 	docker-compose down --volumes
 
 build:
-	docker-compose build
+	# Specify compose file explicitly, we don't want to build any other container sets
+	COMPOSE_FILE=$(DEFAULT_COMPOSE_FILE) docker-compose build
 
-up:
-	docker-compose up -d
-	@echo -n "Waiting 30 seconds for services to finish starting..."
-	@sleep 30
-	@echo " done."
-
-bootstrap: bootstrap-storage-service bootstrap-dashboard restart-mcp-services
+bootstrap: build bootstrap-storage-service bootstrap-dashboard restart-mcp-services
 
 bootstrap-storage-service:
-	docker-compose exec mysql mysql -hlocalhost -uroot -p12345 -e "DROP DATABASE IF EXISTS SS;"
-	docker-compose exec mysql mysql -hlocalhost -uroot -p12345 -e "CREATE DATABASE SS;"
-	docker-compose exec mysql mysql -hlocalhost -uroot -p12345 -e "GRANT ALL ON SS.* TO 'archivematica'@'%' IDENTIFIED BY 'demo';"
+	# Wait for services to start properly to avoid race/timing problems
+	@sleep 30
+	docker-compose exec mysql mysql -hlocalhost -uroot -p12345 -e "\
+		DROP DATABASE IF EXISTS SS; \
+		CREATE DATABASE SS; \
+		GRANT ALL ON SS.* TO 'archivematica'@'%' IDENTIFIED BY 'demo';"
 	docker-compose run \
 		--rm \
 		--entrypoint /src/storage_service/manage.py \
@@ -37,9 +42,12 @@ bootstrap-storage-service:
 					--api-key="test"
 
 bootstrap-dashboard:
-	docker-compose exec mysql mysql -hlocalhost -uroot -p12345 -e "DROP DATABASE IF EXISTS MCP;"
-	docker-compose exec mysql mysql -hlocalhost -uroot -p12345 -e "CREATE DATABASE MCP;"
-	docker-compose exec mysql mysql -hlocalhost -uroot -p12345 -e "GRANT ALL ON MCP.* TO 'archivematica'@'%' IDENTIFIED BY 'demo';"
+	# Wait for services to start properly to avoid race/timing problems
+	@sleep 30
+	docker-compose exec mysql mysql -hlocalhost -uroot -p12345 -e "\
+		DROP DATABASE IF EXISTS MCP; \
+		CREATE DATABASE MCP; \
+		GRANT ALL ON MCP.* TO 'archivematica'@'%' IDENTIFIED BY 'demo';"
 	docker-compose run \
 		--rm \
 		--entrypoint /src/dashboard/src/manage.py \
@@ -60,8 +68,20 @@ bootstrap-dashboard:
 					--ss-user="test" \
 					--ss-api-key="test"
 
+config:
+	docker-compose config
+
+list:
+	docker-compose ps
+
 restart-mcp-services:
 	docker-compose restart archivematica-mcp-server archivematica-mcp-client
+
+up: build
+	$(foreach DIR, $(COMPOSE_DIRS), docker-compose up -d ;)
+	@echo -n "Waiting 30 seconds for services to finish starting..."
+	@sleep 30
+	@echo " done."
 
 watch-am:
 	docker-compose logs -f archivematica-mcp-server archivematica-mcp-client archivematica-dashboard
@@ -69,4 +89,4 @@ watch-am:
 watch-ss:
 	docker-compose logs -f archivematica-storage-service
 
-.PHONY: default destroy bootstrap build bootstrap-dashboard bootstrap-storage-service restart-mcp-services
+.PHONY: default destroy bootstrap build bootstrap-dashboard bootstrap-storage-service config list restart-mcp-services
