@@ -1,5 +1,11 @@
 [
   {
+    "environment": [
+      {
+        "name": "SERVICE_NAME",
+        "value": "clamavd"
+      }
+    ],
     "essential": true,
     "image": "dinkel/clamavd:latest",
     "mountPoints": [],

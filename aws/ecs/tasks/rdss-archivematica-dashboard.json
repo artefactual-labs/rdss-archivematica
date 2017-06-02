@@ -20,6 +20,10 @@
       {
         "name": "ARCHIVEMATICA_DASHBOARD_GEARMAN",
         "value": "gearmand:4730"
+      },
+      {
+        "name": "SERVICE_NAME",
+        "value": "dashboard"
       }
     ],
     "essential": true,

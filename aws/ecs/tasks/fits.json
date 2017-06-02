@@ -1,6 +1,12 @@
 [
   {
     "essential": true,
+    "environment": [
+      {
+        "name": "SERVICE_NAME",
+        "value": "fits"
+      }
+    ],
     "image": "artefactual/fits-ngserver:0.8.4",
     "mountPoints": [
       {

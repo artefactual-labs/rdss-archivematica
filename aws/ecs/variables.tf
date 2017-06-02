@@ -55,12 +55,12 @@ variable "asg_min" {
 
 variable "asg_max" {
   description = "Max numbers of servers in ASG"
-  default     = "1"
+  default     = "2"
 }
 
 variable "asg_desired" {
   description = "Desired numbers of servers in ASG"
-  default     = "1"
+  default     = "2"
 }
 
 variable "nfs_ami" {

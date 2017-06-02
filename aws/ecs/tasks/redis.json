@@ -1,6 +1,12 @@
 [
   {
     "cpu": 256,
+    "environment": [
+      {
+        "name": "SERVICE_NAME",
+        "value": "redis"
+      }
+    ],
     "essential": true,
     "image": "${image_url}",
     "logConfiguration": {

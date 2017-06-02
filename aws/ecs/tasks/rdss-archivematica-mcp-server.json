@@ -8,6 +8,10 @@
       {
         "name": "DJANGO_SETTINGS_MODULE",
         "value": "settings.common"
+      },
+      {
+        "name": "SERVICE_NAME",
+        "value": "mcp-server"
       }
     ],
     "essential": true,

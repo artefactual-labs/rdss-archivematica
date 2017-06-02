@@ -20,6 +20,10 @@
       {
         "name": "SS_DB_URL",
         "value": "mysql://archivematica:demo@mysql/SS"
+      },
+      {
+        "name": "SERVICE_NAME",
+        "value": "storage-service"
       }
     ],
     "essential": true,

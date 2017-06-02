@@ -1,5 +1,11 @@
 [
   {
+    "environment": [
+      {
+        "name": "SERVICE_NAME",
+        "value": "nginx"
+      }
+    ],
     "essential": true,
     "image": "nginx:stable-alpine",
     "mountPoints": [

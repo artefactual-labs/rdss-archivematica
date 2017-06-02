@@ -26,21 +26,21 @@ echo ECS_CLUSTER=${aws_ecs_cluster.main.name} > /etc/ecs/ecs.config
 
 yum install -y wget
 
-wget https://github.com/awslabs/service-discovery-ecs-dns/releases/download/1.2/ecssd_agent -O /usr/local/bin/ecssd_agent
-chmod 755 /usr/local/bin/ecssd_agent
+wget https://github.com/JiscRDSS/rdss-archivematica-ecssd-agent/releases/download/v0.1.0/rdss-archivematica-ecssd-agent -O /usr/local/bin/rdss-archivematica-ecssd-agent
+chmod 755 /usr/local/bin/rdss-archivematica-ecssd-agent
 
-wget https://raw.githubusercontent.com/awslabs/service-discovery-ecs-dns/1.2/ecssd_agent.conf -O /etc/init/ecssd_agent.conf
-chmod 644 /etc/init/ecssd_agent.conf
+wget https://github.com/JiscRDSS/rdss-archivematica-ecssd-agent/releases/download/v0.1.0/rdss-archivematica-ecssd-agent.conf -O /etc/init/rdss-archivematica-ecssd-agent.conf
+chmod 644 /etc/init/rdss-archivematica-ecssd-agent.conf
 initctl reload-configuration
 
-start ecssd_agent
+start rdss-archivematica-ecssd-agent
 
 yum -y install nfs-utils
 service rpcbind start
 mkdir /mnt/nfs
 timeout -s9 10 mount -t nfs4 nfs.rdss-archivematica.test:/mnt/nfs0 /mnt/nfs
 
-wget  https://gist.github.com/mamedin/624b520477173daae628fc9913bc9aa4/raw -O /usr/local/bin/test_nfs
+wget https://gist.github.com/mamedin/624b520477173daae628fc9913bc9aa4/raw -O /usr/local/bin/test_nfs
 chmod +x /usr/local/bin/test_nfs
 echo "  *  *  *  *  * root /usr/local/bin/test_nfs" >> /etc/crontab
 
@@ -106,8 +106,8 @@ resource "aws_iam_role" "app_instance" {
 EOF
 }
 
-resource "aws_iam_role_policy" "instance" {
-  name   = "TfEcsExampleInstanceRole"
+resource "aws_iam_role_policy" "ecs_ec2_instance_policy" {
+  name   = "ecs-ec2-instance-policy"
   role   = "${aws_iam_role.app_instance.name}"
 
   policy = <<EOF
@@ -123,6 +123,18 @@ resource "aws_iam_role_policy" "instance" {
         "ecs:Poll",
         "ecs:RegisterContainerInstance",
         "ecs:Submit*"
+      ],
+      "Resource": [
+        "*"
+      ]
+    },
+    {
+      "Sid": "allowEcssdAgentRoute53",
+      "Effect": "Allow",
+      "Action": [
+        "route53:ListHostedZonesByName",
+        "route53:ListResourceRecordSets",
+        "route53:ChangeResourceRecordSets"
       ],
       "Resource": [
         "*"

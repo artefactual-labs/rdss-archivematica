@@ -38,8 +38,8 @@
         "value": "kinesis"
       },
       {
-        "name": "AWS_REGION",
-        "value": "${aws_region}"
+        "name": "SERVICE_NAME",
+        "value": "channel-adapter-consumer"
       }
     ],
     "essential": true,

@@ -16,6 +16,10 @@
       {
         "name": "NAILGUN_PORT",
         "value": "2113"
+      },
+      {
+        "name": "SERVICE_NAME",
+        "value": "mcp-client"
       }
     ],
     "essential": true,
