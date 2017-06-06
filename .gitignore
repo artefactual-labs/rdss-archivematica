@@ -6,6 +6,7 @@
 /src/archivematica-storage-service
 /src/archivematica-sampledata
 /src/rdss-archivematica-channel-adapter
+/src/rdss-archivematica-msgcreator
 
 # Terraform compiled files
 *.tfstate
