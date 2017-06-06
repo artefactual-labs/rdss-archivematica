@@ -264,3 +264,13 @@ services:
     ports:
       - "6060" # See net/http/pprof
 
+  rdss-archivematica-msgcreator:
+    build:
+      context: "../src/rdss-archivematica-msgcreator"
+    entrypoint: "go run main.go -addr=0.0.0.0:8000 -kinesis-endpoint=http://minikine:4567 -kinesis-stream=main -kinesis-region=eu-west-2"
+    links:
+      - "minikine"
+    volumes:
+      - "../src/rdss-archivematica-msgcreator:/go/src/github.com/JiscRDSS/rdss-archivematica-msgcreator"
+    ports:
+      - "8000"
