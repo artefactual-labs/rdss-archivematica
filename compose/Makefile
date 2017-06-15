@@ -13,7 +13,7 @@ else ifeq ("$(SHIBBOLETH_CONFIG)", "example")
 	override COMPOSE_DIRS = example-shib
 else ifeq ("$(SHIBBOLETH_CONFIG)", "proxy")
 	# Only build example services, not Archivematica
-	override COMPOSE_DIRS = shib-proxy
+	override COMPOSE_DIRS = proxy-shib
 endif
 
 # Set the docker-compose COMPOSE_FILE env var to include the config from each

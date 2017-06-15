@@ -1,0 +1,24 @@
+---
+version: "2"
+
+services:
+  # Override main nginx config, linking it to our demo services
+  nginx:
+    image: "arkivum/shibboleth-nginx:${DOMAIN_NAME}"
+    container_name: "myapp.${DOMAIN_NAME}"
+    hostname: "myapp"
+    domainname: "${DOMAIN_NAME}"
+    networks:
+      - "default"
+    environment:
+      # Client app configuration
+      # Nginx proxying - the actual app we want to present
+      NGINX_PROXY_DESTINATION: "${NGINX_PROXY_DESTINATION}"
+
+      # Shibboleth config
+      SHIBBOLETH_IDP_ENTITY_ID: "https://${IDP_HOSTNAME}/idp/shibboleth"
+      SHIBBOLETH_IDP_METADATA_URL: "https://$IDP_HOSTNAME}:4443/idp/shibboleth"
+    expose:
+      - "443"
+    ports:
+      - "${NGINX_EXTERNAL_IP}:443:443"
