@@ -11,7 +11,7 @@ DOMAIN_NAME=${DOMAIN_NAME:-"example.ac.uk"}
 
 CA_DIR=${SHIB_DIR}/ca
 
-SP1_HOSTNAME="sp1.${DOMAIN_NAME}"
+SP1_HOSTNAME=${SP1_HOSTNAME:-"sp1.${DOMAIN_NAME}"}
 
 
 mkdir -p ${BUILD_DIR}

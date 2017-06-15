@@ -8,7 +8,7 @@ DOMAIN_NAME=${DOMAIN_NAME:-"example.ac.uk"}
 
 CA_DIR="$(pwd)/../ca"
 
-IDP_HOSTNAME="idp.${DOMAIN_NAME}"
+IDP_HOSTNAME=${IDP_HOSTNAME:-"idp.${DOMAIN_NAME}"}
 
 mkdir -p ${BUILD_DIR}
 

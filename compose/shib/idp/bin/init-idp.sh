@@ -26,7 +26,7 @@ rm -r ../conf/
 ./build.sh \
 	-Didp.noprompt \
 	-Didp.target.dir=/opt/shibboleth-idp \
-	-Didp.host.name=idp.${DOMAIN_NAME} \
+	-Didp.host.name=${IDP_HOSTNAME} \
 	-Didp.keystore.password=12345 \
 	-Didp.sealer.password=12345 \
 	-Didp.merge.properties=/tmp/idp.properties \
